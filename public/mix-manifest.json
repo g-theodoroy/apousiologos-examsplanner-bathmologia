@@ -1,0 +1,18 @@
+{
+    "/js/app.js": "/js/app.js",
+    "/css/app.css": "/css/app.css",
+    "/css/font-awesome.min.css": "/css/font-awesome.min.css",
+    "/fonts/fontawesome-webfont.eot": "/fonts/fontawesome-webfont.eot",
+    "/fonts/fontawesome-webfont.svg": "/fonts/fontawesome-webfont.svg",
+    "/fonts/fontawesome-webfont.ttf": "/fonts/fontawesome-webfont.ttf",
+    "/fonts/fontawesome-webfont.woff": "/fonts/fontawesome-webfont.woff",
+    "/fonts/fontawesome-webfont.woff2": "/fonts/fontawesome-webfont.woff2",
+    "/fonts/FontAwesome.otf": "/fonts/FontAwesome.otf",
+    "/js/jquery.min.js": "/js/jquery.min.js",
+    "/js/jquery.dataTables.min.js": "/js/jquery.dataTables.min.js",
+    "/js/dataTables.bulma.min.js": "/js/dataTables.bulma.min.js",
+    "/css/dataTables.bulma.min.css": "/css/dataTables.bulma.min.css",
+    "/css/fullcalendar.min.css": "/css/fullcalendar.min.css",
+    "/js/fullcalendar.min.js": "/js/fullcalendar.min.js",
+    "/js/fullcalendar.el.js": "/js/fullcalendar.el.js"
+}

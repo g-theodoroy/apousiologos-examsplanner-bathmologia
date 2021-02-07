@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="el">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- CSRF Token -->
+        <meta name="csrf-token" content="ExSAyLK0RATN1LJJUNlHKRRFw8jLKZ1lxAFGjcKv">
+
+        <title>Ηλ.Απουσιολόγος</title>
+
+        <!-- Styles -->
+        <link href="http://localhost/workspace/apousiologos/public/css/app.css" rel="stylesheet">
+        <link href="http://localhost/workspace/apousiologos/public/css/font-awesome.min.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="app">
+            <nav class="navbar has-shadow">
+                <div class="container">
+                    <div class="navbar-brand">
+                        <a href="http://localhost/workspace/apousiologos/public" class="navbar-item">Ηλ.Απουσιολόγος</a>
+
+                        <div class="navbar-burger burger" data-target="navMenu">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+
+                    <div class="navbar-menu" id="navMenu">
+                        <div class="navbar-start"></div>
+
+                        <div class="navbar-end">
+                                                            <div class="navbar-item has-dropdown is-hoverable">
+                                    <a class="navbar-link" href="#">11 ΓΕΛ Πάτρας</a>
+
+                                    <div class="navbar-dropdown">
+                                                                        <a class="navbar-item" href="http://localhost/workspace/apousiologos/public/home">
+                                        Αρχική
+                                    </a>
+                                      <a class="navbar-item" href="http://localhost/workspace/apousiologos/public/admin">
+                                          Διαχείριση
+                                      </a>
+                                      <a class="navbar-item" href="http://localhost/workspace/apousiologos/public/export">
+                                          Εξαγωγή xls
+                                      </a>
+                                                                              <a class="navbar-item" href="http://localhost/workspace/apousiologos/public/logout"
+                                           onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                                            Έξοδος
+                                        </a>
+
+                                        <form id="logout-form" action="http://localhost/workspace/apousiologos/public/logout" method="POST"
+                                              style="display: none;">
+                                            <input type="hidden" name="_token" value="ExSAyLK0RATN1LJJUNlHKRRFw8jLKZ1lxAFGjcKv">
+                                        </form>
+                                    </div>
+                                </div>
+                                                    </div>
+                    </div>
+                </div>
+            </nav>
+            
+    <div class="container">
+
+          <div class="columns is-marginless is-centered">
+            <div class="column is-full-width">
+                <nav class="card">
+
+<table class="table">
+<thead>
+<tr>
+  <th>Α/Α</th>
+  <th>Αριθμός Μητρώου</th>
+  <th>Επώνυμο Μαθητή</th>
+  <th>Όνομα Μητέρας</th>
+  <th>Σ</th>
+  <th>Αιτία αδικαιολόγητης απουσίας</th>
+  <th>Δ</th>
+  <th>Τύπος Δικαιολόγησης</th>
+  <th>Ημ/νία Απουσιών (μορφή ΗΗ/ΜΜ/ΕΕ)</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+                    </nav>
+                    </div>
+                  </form>
+                </nav>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+<script>
+
+</script>
+        </div>
+
+        <!-- Scripts -->
+        <script src="http://localhost/workspace/apousiologos/public/js/app.js"></script>
+    </body>
+</html>
