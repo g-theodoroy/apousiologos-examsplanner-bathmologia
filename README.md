@@ -15,7 +15,7 @@
 #### linux terminal
 
 ```
-git clone https://github.com/g-theodoroy/apousiologos-planner-bathmologia.git
+git clone https://github.com/g-theodoroy/apousiologos-examsplanner-bathmologia.git
 cd apousiologos-planner-bathmologia/
 composer install --no-dev
 chmod -R 0777 storage/
@@ -25,7 +25,7 @@ chmod -R 0777 storage/
 
 Κατεβάστε το zip:
 
-https://github.com/g-theodoroy/apousiologos-planner-bathmologia/archive/master.zip
+https://github.com/g-theodoroy/apousiologos-examsplanner-bathmologia/archive/master.zip
 
 Αποσυμπιέστε και με το **cmd** πηγαίνετε στον φάκελο και τρέξτε:
 ```
