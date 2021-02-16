@@ -94,3 +94,5 @@ Route::get('/calendar/mathimata', 'FullCalendarController@mathimata');
 Route::get('/grades/{selectedAnathesiId?}', 'GradeController@index')->name('grades');
 Route::post('/grades/{selectedAnathesiId?}', 'GradeController@index')->name('grades.save');
 Route::get('/export/gradesxls', 'GradeController@exportGradesXls')->name('gradesxls')->middleware('admin');
+
+Route::post('/export/populateXls/{insertToDB?}', 'AdminController@populateXls')->name('populateXls')->middleware('admin');

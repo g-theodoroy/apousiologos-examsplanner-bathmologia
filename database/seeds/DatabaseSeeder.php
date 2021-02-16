@@ -129,6 +129,27 @@ class DatabaseSeeder extends Seeder
       'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
     ]);
 
+    DB::table('configs')->insert([
+      'key' => '187XlsLabelsRow',
+      'value' => 3,
+      'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+      'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+    ]);
+
+    DB::table('configs')->insert([
+      'key' => '187XlsAmRow',
+      'value' => 2,
+      'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+      'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+    ]);
+
+    DB::table('configs')->insert([
+      'key' => '187XlsFirstLessonCol',
+      'value' => 5,
+      'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+      'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+    ]);
+
     DB::table('programs')->insert([
       'id' => 1,
       'start' => 815,

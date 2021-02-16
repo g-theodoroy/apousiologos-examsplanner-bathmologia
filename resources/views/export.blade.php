@@ -70,7 +70,7 @@
                 <nav class="card">
                     <header class="card-header">
                         <p class="card-header-title">
-                            Εξαγωγή 187.xls για καταχώριση στο myschool 
+                            Εξαγωγή αρχείου 187.xls όλων των μαθητών όλων των τάξεων για καταχώριση στο myschool 
                         </p>
                     </header>
 
@@ -127,10 +127,134 @@
             </div>
         </div>
 
+        <div class="columns is-marginless is-centered">
+            <div class="column is-10">
+                <nav class="card">
+                    <header class="card-header">
+                    <p class="card-header-title">
+                        Ενημέρωση των εξηχθέντων αρχείων 187.xls για κάθε τάξη από το myschool 
+                    </p>
+                    </header>
+
+                    <form name="frm" id="frm" role="form" method="POST" action="{{ url('export/populateXls') }}" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <div class="card-content">
+                        <nav class="level">
+
+                        @if( \App\Config::getConfigValueOf('activeGradePeriod'))
+
+                            <div class="level-item">
+                                <p class="card-header-title">
+                                    {{\App\Period::find(\App\Config::getConfigValueOf('activeGradePeriod'))->period}}
+                                </p>
+                            </div>
+                                        
+                            <div id="file-xls" class="file has-name level-item ">
+                                <label class="file-label">
+                                <input class="file-input" type="file" name="file_xls">
+                                <span class="file-cta">
+                                    <span class="file-icon">
+                                    <i class="fa fa-search"></i>
+                                    </span>
+                                    <span class="file-label">
+                                    Επιλογή xls
+                                    </span>
+                                </span>
+                                <span class="file-name">
+                                    ---
+                                </span>
+                                </label>
+                            </div>
+
+                            <div class="level-item">
+                                <button id="sbmt_xls" class="button" type="submit" disabled>
+                                <span class="icon">
+                                <i class="fa fa-download"></i>
+                                </span>
+                                <span>Ενημέρωση xls</span>
+                                </button>
+                            </div>
+
+                        </nav>
+                    </div>
+                    <div class="card-content">
+                        <nav class="level">
+
+                                <div class="level-item">
+                                    <div class="field-label is-normal">
+                                        <label class="label">Γραμμή&nbsp;επικεφαλίδων</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div>
+                                            <p class="control">
+                                                <input name="labelsRow" class="input" type="text"
+                                                    size="1" value="{{ App\Config::getconfigValueOf('187XlsLabelsRow') }}" >
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                        
+                                <div class="level-item">
+                                    <div class="field-label is-normal">
+                                        <label class="label">Κολώνα&nbsp;Αρ.&nbsp;Μητρώου</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div>
+                                            <p class="control">
+                                                <input name="amCol" class="input" type="text"
+                                                    size="1" value="{{ App\Config::getconfigValueOf('187XlsAmCol') }}" >
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="level-item">
+                                    <div class="field-label is-normal">
+                                        <label class="label">Κολώνα&nbsp;1ου&nbsp;μαθήματος</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div>
+                                            <p class="control">
+                                                <input name="firstLessonCol" class="input" type="text"
+                                                    size="1" value="{{ App\Config::getconfigValueOf('187XlsFirstLessonCol') }}" >
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>  
+                                
+                                 @else
+
+                                    <div class="level-item">
+                                        <p class="card-header-title">
+                                        Επιλέξτε Βαθμολογική περίοδο στις &nbsp;<a href="{{ route('admin')}}"> ρυθμίσεις</a>
+                                        </p>
+                                    </div>
+
+                                 @endif
+                               
+
+                        </nav>
+
+                    </div>
+                    </form>
+                </nav>
+
+            </div>
+        </div>
+
 
     </div>
 
     <script>
+  const fileInput = document.querySelector('#file-xls input[type=file]');
+  fileInput.onchange = () => {
+    if (fileInput.files.length > 0) {
+      document.getElementById("sbmt_xls").disabled = false;
+      const fileName = document.querySelector('#file-xls .file-name');
+      fileName.textContent = fileInput.files[0].name;
+    }
+  }
 
     </script>
 @endsection
