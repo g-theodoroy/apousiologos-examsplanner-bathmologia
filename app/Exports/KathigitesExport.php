@@ -85,7 +85,7 @@ class KathigitesExport implements FromCollection, WithHeadings, ShouldAutoSize, 
         ['', '', '', '', 'τμήμα1-4', 'μάθημα1-4'],
         ['Επώνυμο2', 'Όνομα2', 'email2', 'password2', 'τμήμα2-1', 'μάθημα2-1'],
         ['', '', '', '', 'τμήμα2-2', 'μάθημα2-2'],
-        ['', '', '', '', 'τμήμα2-3'], 'μάθημα2-3'
+        ['', '', '', '', 'τμήμα2-3', 'μάθημα2-3']
       ];
     }
     return collect($arrKathigites);
