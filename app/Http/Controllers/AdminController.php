@@ -105,6 +105,7 @@ class AdminController extends Controller
     Config::setConfigValueOf('totalEndMonthDay', request()->input('totalEndMonthDay'));
     Config::setConfigValueOf('activeGradePeriod', request()->input('activeGradePeriod'));
     Config::setConfigValueOf('showOtherGrades', request()->input('showOtherGrades'));
+    Config::setConfigValueOf('pastDaysInsertApousies', request()->input('pastDaysInsertApousies'));
     return redirect()->route('admin')->with( ['setDone' => 1] );
   }
 
@@ -243,7 +244,7 @@ if($insertToDB){
 
         
         // βρίσκω το κοινό τμήμα μαθητή και μαθήματος και με αυτό βρίσκω το id της ανάθεσης
-        $tmima = array_values(array_intersect(array_keys($arrAnatheseis[$lesson]), $arrTmimata[$am]));
+        $tmima = array_values(array_intersect($arrTmimata[$am], array_keys($arrAnatheseis[$lesson]) ));
         $anathesi_id = $arrAnatheseis[$lesson][$tmima[0]];
         //echo $am . " - " . $lesson  . " - " . $tmima[0]  . " - " . $anathesi_id  . " - " . $grade . "<hr>";
         

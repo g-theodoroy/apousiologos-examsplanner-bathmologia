@@ -18,7 +18,7 @@
           @endif
         </header>
 
-        <form name="formSet" id="formSet" role="form" method="POST" action="{{ url('/set') }}">
+        <form name="formSet" id="formSet" role="form" method="POST" action="{{ url('/set') }}" onsubmit="return chkCustomDateFormat()">
           {{ csrf_field() }}
           <div class="card-content">
             <div class="columns is-centered">
@@ -61,8 +61,12 @@
                   </tr>
                   <tr>
                   <tr>
+                    <td>Οι καθηγητές μπορούν να εισάγουν απουσίες {{App\Config::getConfigValueOf('pastDaysInsertApousies')}} ημέρες πίσω</td>
+                    <td class="has-text-centered"><input id="pastDaysInsertApousies" name="pastDaysInsertApousies" class="input has-text-centered" type="text" value="{{App\Config::getConfigValueOf('pastDaysInsertApousies')}}" ></td>
+                  </tr>
+                  <tr>
                     <td>Ορισμός Ημνιας εισαγωγής απουσιών</td>
-                    <td class="has-text-centered"><input name="setCustomDate" class="input has-text-centered" type="text" value="{{App\Config::getConfigValueOf('setCustomDate')}}"></td>
+                    <td class="has-text-centered"><input id="setCustomDate" name="setCustomDate" class="input has-text-centered" type="text" value="{{App\Config::getConfigValueOf('setCustomDate')}}" placeholder="ηη/μμ/εε" ></td>
                   </tr>
                   <tr><td colspan="2" class="has-text-centered" ><b>Προγραμματισμός διαγωνισμάτων</b></td></>
                   <tr>
@@ -75,11 +79,11 @@
                   </tr>
                   <tr>
                     <td>Αρχή σχολικού έτους "Μήνας-Ημέρα"</td>
-                    <td class="has-text-centered"><input name="totalStartMonthDay" class="input has-text-centered" type="text" value="{{App\Config::getConfigValueOf('totalStartMonthDay')}}"></td>
+                    <td class="has-text-centered"><input name="totalStartMonthDay" class="input has-text-centered" type="text" value="{{App\Config::getConfigValueOf('totalStartMonthDay')}}" placeholder="μμ-ηη" ></td>
                   </tr>
                   <tr>
                     <td>Τέλος σχολικού έτους "Μήνας-Ημέρα"</td>
-                    <td class="has-text-centered"><input name="totalEndMonthDay" class="input has-text-centered" type="text" value="{{App\Config::getConfigValueOf('totalEndMonthDay')}}"></td>
+                    <td class="has-text-centered"><input name="totalEndMonthDay" class="input has-text-centered" type="text" value="{{App\Config::getConfigValueOf('totalEndMonthDay')}}" placeholder="μμ-ηη" ></td>
                   </tr>
                   <tr><td colspan="2" class="has-text-centered" ><b>Κατάθεση βαθμολογίας</b></td></tr>
                   <tr>
@@ -628,5 +632,17 @@
     if (confirm(msg)) window.location.href = "{{ url('/delapou') }}/" + keepDays
     @endif
   }
+
+  function chkCustomDateFormat(){
+    const element = document.getElementById('setCustomDate')
+    if(element.value){
+      if( ! element.value.match(/^(\d{2})\/(\d{2})\/(\d{2})$/)){
+        alert('Η ημερομηνία πρέπει να έχει τη μορφή "ηη/μμ/εε"')
+        element.focus();
+        return false
+      }
+    }
+  }
+
 </script>
 @endsection

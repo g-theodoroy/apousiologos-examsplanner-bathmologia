@@ -66,8 +66,14 @@ class HomeController extends Controller
           // ή η συγκεκριμμένη ημέρα
           $date = Carbon::createFromFormat("!d/m/y", $setCustomDate)->format("Ymd");
         }else{
-          // ή σήμερα
-          $date = Carbon::now()->format("Ymd");
+          // έλεγχος ότι ο μη διαχειριστής δεν μπορεί να πάει
+          // σε μελλοντική ημερομηνία ή παρελθούσα πριν την μέγιστη επιτρεπόμενη
+          if(Config::getConfigValueOf('pastDaysInsertApousies')){
+            $today = Carbon::now()->format("Ymd");
+            $lastPreviousDay = Carbon::now()->subDays(Config::getConfigValueOf('pastDaysInsertApousies'))->format("Ymd");
+            if ($date > $today) $date = $today;
+            if ($date < $lastPreviousDay) $date = $lastPreviousDay;
+          }
         }
       }
 

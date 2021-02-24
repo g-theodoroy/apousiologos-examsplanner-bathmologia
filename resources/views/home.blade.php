@@ -14,7 +14,7 @@
                             <header class="card-header">
                                 <div class="level is-mobile">
                                     @php($now = Carbon\Carbon::Now()->format('d/m/y'))
-                                        @if (!$isAdmin)
+                                        @if ((!$isAdmin && $setCustomDate) || (!$isAdmin && ! \App\Config::getConfigValueOf('pastDaysInsertApousies')))
                                             <p
                                                 class="card-header-title level-item column is-narrow has-text-centered {{ $setCustomDate ? 'has-background-warning' : '' }}">
                                                 {{ $setCustomDate ? $setCustomDate : $now }}
@@ -35,7 +35,7 @@
                                         </p>
                                     </div>
                                 </header>
-                                @if ($isAdmin)
+                                @if ($isAdmin || ( ! $setCustomDate && \App\Config::getConfigValueOf('pastDaysInsertApousies')))
                                     <div class="card-content">
                                         <div class="columns is-mobile is-centered">
                                             <div class="column is-narrow level">
@@ -53,7 +53,7 @@
                                                     </p>
                                                     <p class="control">
                                                         <input class="input level-item has-text-centered" id="date" name="date"
-                                                            type="text" value="{{ $date }}" size="7" />
+                                                            type="text" value="{{ $date }}" size="7" placeholder="ηη/μμ/εε" />
                                                     </p>
                                                     @if ($now !== $date)
                                                         <p class="control">
@@ -68,14 +68,16 @@
                                                                     class="fa fa-angle-right"></i></span>
                                                         </a>
                                                     </p>
+                                                    @if($isAdmin)
                                                         <p class="control">
                                                             <a class="button" href="javascript:exportXls()">
                                                                 <span class="icon" title="Εξαγωγή xls"><i class="fa fa-download"></i></span>
                                                             </a>
                                                         </p>
+                                                    @endif
                                                     <p class="control">
                                                         <a id="changeDate" class="button" href="{{ url('/home', $selectedTmima) }}"
-                                                            onclick="changeDate(this)"><span class="icon" title="Βρες την ημέρα"><i
+                                                            onclick="return changeDate(this)"><span class="icon" title="Βρες την ημέρα"><i
                                                                     class="fa fa-search"></i></span></a>
                                                     </p>
                                                 </div>
@@ -367,6 +369,7 @@
 
                 function changeDate(element) {
                     var mydate = document.getElementById('date').value
+                    if(! chkDateFormat(mydate)) return false
                     mydate = "20" + mydate.substring(6, 8) + mydate.substring(3, 5) + mydate.substring(0, 2)
                     element.href = "{{ url('/home', $selectedTmima) }}" + '/' + mydate
                     return true;
@@ -374,6 +377,7 @@
 
                 function formValidateDate() {
                     var dateToCommit = document.getElementById('date').value
+                    if(! chkDateFormat(dateToCommit)) return
                     if (dateToCommit !== '{{ $date }}') {
                         document.getElementById('changeDate').click()
                     } else {
@@ -383,12 +387,32 @@
 
                 function calculateDate(to) {
                     mydateStr = document.getElementById('date').value
+                    if(! chkDateFormat(mydateStr)) return
                     mydateStr = mydateStr.substring(0, 2) + '/' + mydateStr.substring(3, 5) + '/' + "20" + mydateStr.substring(6, 8)
                     mydate = parseDate(mydateStr)
                     if (to == '+') {
                         newdate = new Date(mydate.getTime() + 86400000); // + 1 day in ms
+                        @if (!$isAdmin)
+                            var todayDate = new Date();
+                            if(newdate > todayDate ){
+                                newdate = todayDate
+                                alert('Δεν επιτρέπεται η πλοήγηση σε μελλοντικές ημερομηνίες')
+                                return
+                            } 
+                        @endif
                     } else {
                         newdate = new Date(mydate.getTime() - 86400000); // + 1 day in ms
+                        @if (!$isAdmin &&  \App\Config::getConfigValueOf('pastDaysInsertApousies'))
+                            var daysBack = {{ \App\Config::getConfigValueOf('pastDaysInsertApousies') }}
+                            var dateOffset = (24*60*60*1000) * daysBack; //5 days
+                            var chkDate = new Date();
+                            chkDate.setTime(chkDate.getTime() - dateOffset);
+                            if(newdate < chkDate ) {
+                                newdate = mydate
+                                alert('Δεν επιτρέπεται η πλοήγηση σε προγενέστερες ημερομηνίες')
+                                return
+                            }
+                        @endif
                     }
                     dateToGo = [
                         newdate.getFullYear(),
@@ -413,8 +437,24 @@
 
                 function exportXls(){
                     var fordate = document.getElementById('date').value
+                    if(! chkDateFormat(fordate)) return
                     window.location.href = "{{ route('apouxls') }}" + "?apoDate=" + fordate + "&eosDate=" + fordate
                 }
+
+                function chkDateFormat(date){
+                    if(! date){
+                        alert('Συμπληρώστε την Ημερομηνία' )
+                        document.getElementById('date').focus();
+                        return false
+                    }
+                    if( ! date.match(/^(\d{2})\/(\d{2})\/(\d{2})$/)){
+                        alert('Η ημερομηνία πρέπει να έχει τη μορφή "ηη/μμ/εε"')
+                        document.getElementById('date').focus();
+                        return false
+                    }
+                    return true
+                }
+
             </script>
 
         @endsection
