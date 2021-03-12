@@ -26,7 +26,7 @@ class FullCalendarController extends Controller
     {
 
         $mathimata = $this->mathimata();
-        
+
         return view('fullcalendar', compact('mathimata'));
     }
 
@@ -62,7 +62,7 @@ class FullCalendarController extends Controller
 
     public function tmimata(Request $request)
     {
-        // παίρνω τα δεδομένα 
+        // παίρνω τα δεδομένα
         $date = $request->start;
         $week = $request->week;
         $user_id = Auth::user()->id;
@@ -111,19 +111,20 @@ class FullCalendarController extends Controller
         $title = $request->tmima2  ?  $request->tmima1 . '-' . $request->tmima2  : $request->tmima1;
         $title .= ', ' . $request->mathima .  ', ' . User::find($request->user_id)->name;
 
-        $insertArr = [
+        $event = Event::updateOrCreate([
+            'user_id' => $request->user_id,
+            'tmima1' => $request->tmima1,
+            'tmima2' => $request->tmima2,
+            'mathima' => $request->mathima
+       ], [
             'title' => $title,
             'start' => $request->start,
             'end' => $request->end,
             'week' => $request->week,
-            'tmima1' => $request->tmima1,
-            'mathima' => $request->mathima,
-            'tmima2' => $request->tmima2,
-            'user_id' => $request->user_id,
             'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
-        ];
-        $event = Event::create($insertArr);
+        ]);
+
         return Response::json($event);
     }
 
@@ -131,7 +132,7 @@ class FullCalendarController extends Controller
     public function update(Request $request)
     {
 
-        // παίρνω τα δεδομένα 
+        // παίρνω τα δεδομένα
         $date = $request->start;
         $week = $request->week;
         $oldWeek = $request->oldWeek;
@@ -238,7 +239,7 @@ class FullCalendarController extends Controller
         $tmimataNotConflict = array();
 
         foreach ($tmimata as $tmima) {
-            // αν δεν υπάρχουν κοινοί μαθητές (μαθητές τμήματος, μαθητές που δεν πρέπει να γράψουν) 
+            // αν δεν υπάρχουν κοινοί μαθητές (μαθητές τμήματος, μαθητές που δεν πρέπει να γράψουν)
             // το τμήμα είναι ελέυθερο
             if (!count(array_intersect($studentsForTmima[$tmima], $studentsMustNotWrite))) {
                 $tmimataNotConflict[] = $tmima;
