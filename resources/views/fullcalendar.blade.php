@@ -349,6 +349,7 @@
                     $('#tmima1Error').html("")
                 }
 
+                $('#formSubmit').prop("disabled", true);
                 $.ajax({
                     data: $('#calendarForm').serialize(),
                     url: "{{ route('calendar.create') }}",
@@ -359,12 +360,14 @@
                         $('#tmima2').prop('disabled', true)
                         $('.help').html("")
                         $('#calendarModal').removeClass("is-active")
+                        $('#formSubmit').removeAttr('disabled');
                         displayMessage("Επιτυχημένη καταχώριση");
                         calendar.refetchEvents()
                     },
                     error: function(data) {
                         console.log('Error:', data)
                         $('#showError').html(data.responseJSON.message)
+                        $('#formSubmit').removeAttr('disabled');
                     }
                 })
             })
