@@ -120,7 +120,7 @@ class AdminController extends Controller
 
   public function delStudents()
   {
-    $delStudentsCount = Student::all()->count();
+    $delStudentsCount = Student::count();
     Student::truncate();
     Tmima::truncate();
     return redirect()->route('admin')->with( ['delStudentsCount' => $delStudentsCount ] );

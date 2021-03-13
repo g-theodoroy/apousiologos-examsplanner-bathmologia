@@ -77,6 +77,7 @@
                             href="{{ request()->is('home') ? '#' : route('home') }}">
                             Απουσιολόγος
                         </a>
+                        @if(App\Anathesi::countMathimata())
                         <a class="navbar-item {{ request()->is('calendar') ? 'is-active' : '' }}"
                             href="{{ request()->is('calendar') ? '#' : route('calendar') }}">
                             Διαγωνίσματα
@@ -86,6 +87,7 @@
                             href="{{ request()->is('grades') ? '#' : route('grades') }}">
                             Βαθμολογία
                         </a>
+                        @endif
                         @endif
                         <a class="navbar-item {{ request()->is('about') ? 'is-active' : '' }}"
                             href="{{ request()->is('about') ? '#' : route('about') }}">

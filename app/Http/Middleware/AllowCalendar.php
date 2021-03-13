@@ -3,10 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Anathesi;
-use App\Config;
 use Closure;
 
-class AllowGrades
+class AllowCalendar
 {
     /**
      * Handle an incoming request.
@@ -20,8 +19,6 @@ class AllowGrades
         // έλεγχος αν έχει μαθήματα. 
         // Αν ΝΑΙ είναι καθηγητής άν ΟΧΙ είναι απουσιολογος
         if (! Anathesi::countMathimata()) return back();
-        // έλεγχος αν είναι επιλεγμένη ενεργή περίοδος βαθμολογίας
-        if (! Config::getConfigValueOf('activeGradePeriod')) return back();
         return $next($request);
     }
 }

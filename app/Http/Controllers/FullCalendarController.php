@@ -20,6 +20,7 @@ class FullCalendarController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('allow.calendar');
     }
 
     public function index()
@@ -122,7 +123,7 @@ class FullCalendarController extends Controller
             'end' => $request->end,
             'week' => $request->week,
             'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
-            'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+            'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
         ]);
 
         return Response::json($event);

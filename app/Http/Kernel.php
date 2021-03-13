@@ -65,5 +65,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'admin' => \App\Http\Middleware\MustBeAdmin::class,
         'allow.grades' => \App\Http\Middleware\AllowGrades::class,
+        'allow.calendar' => \App\Http\Middleware\AllowCalendar::class,
     ];
 }
