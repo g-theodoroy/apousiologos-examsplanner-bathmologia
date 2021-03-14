@@ -160,12 +160,12 @@
                                                         {{ $selectedTmima ? $selectedTmima : 'Όλα τα τμήματα' }}
                                                     </p>
 
-                                                    @if (!$isAdmin && !$activeHour && !$hoursUnlocked)
+                                                    @if ((!$isAdmin && !$activeHour && !$hoursUnlocked) || ! App\Anathesi::countMathimata())
                                                         <p class="card-header-title level-item">
                                                             Εκτός ωραρίου
                                                         </p>
                                                     @endif
-                                                    @if ($isAdmin || $activeHour != 0 || ($hoursUnlocked && $allowTeachersSaveAtNotActiveHour))
+                                                    @if (($isAdmin || $activeHour != 0 || ($hoursUnlocked && $allowTeachersSaveAtNotActiveHour )) && App\Anathesi::countMathimata())
                                                         @if (!$isWeekend || ($isWeekend && $allowWeekends))
                                                             <a class="button level-item" onclick="formValidateDate()">
                                                                 <span class="icon">
@@ -174,7 +174,7 @@
                                                                 <span>Αποθήκευση</span>
                                                             </a>
                                                         @endif
-                                                        @if ($letTeachersUnlockHours && $activeHour > 0 && !$isAdmin && !$allowTeachersSaveAtNotActiveHour)
+                                                        @if (($letTeachersUnlockHours && $activeHour > 0 && !$isAdmin && !$allowTeachersSaveAtNotActiveHour) && App\Anathesi::countMathimata())
                                                             <a class="button level-item" onclick="unlockChks()">
                                                                 <span class="icon">
                                                                     <i class="fa fa-key"></i>
@@ -277,12 +277,12 @@
                                                         <br>{{ $date }}
                                                     @endif
                                                 </p>
-                                                @if (!$isAdmin && !$activeHour && !$hoursUnlocked)
+                                                @if ((!$isAdmin && !$activeHour && !$hoursUnlocked) || ! App\Anathesi::countMathimata())
                                                     <p class="card-header-title level-item">
                                                         Εκτός ωραρίου
                                                     </p>
                                                 @endif
-                                                @if ($isAdmin || $activeHour != 0 || ($hoursUnlocked && $allowTeachersSaveAtNotActiveHour))
+                                                @if (($isAdmin || $activeHour != 0 || ($hoursUnlocked && $allowTeachersSaveAtNotActiveHour )) && App\Anathesi::countMathimata())
                                                     @if (!$isWeekend || ($isWeekend && $allowWeekends))
                                                         <a class="button level-item" onclick="formValidateDate()">
                                                             <span class="icon">
@@ -291,7 +291,7 @@
                                                             <span>Αποθήκευση</span>
                                                         </a>
                                                     @endif
-                                                    @if ($letTeachersUnlockHours && $activeHour > 0 && !$isAdmin && !$allowTeachersSaveAtNotActiveHour)
+                                                    @if (($letTeachersUnlockHours && $activeHour > 0 && !$isAdmin && !$allowTeachersSaveAtNotActiveHour) && App\Anathesi::countMathimata())
                                                         <a class="button level-item" onclick="unlockChks()">
                                                             <span class="icon">
                                                                 <i class="fa fa-key"></i>
