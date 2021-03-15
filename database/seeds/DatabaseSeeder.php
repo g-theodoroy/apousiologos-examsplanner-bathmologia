@@ -137,7 +137,7 @@ class DatabaseSeeder extends Seeder
     ]);
 
     DB::table('configs')->insert([
-      'key' => '187XlsAmRow',
+      'key' => '187XlsAmCol',
       'value' => 2,
       'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
       'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
