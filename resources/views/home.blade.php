@@ -256,7 +256,7 @@
                                                         @endif
                                                         <input type="checkbox"
                                                             onclick="chkClicked(this.checked,{{ $student['id'] }},{{ $i - 1 }})"
-                                                            @if ($student['apousies'][$i - 1])
+                                                            @if ($student['apousies'][$i - 1] ?? null)
                                                         checked @endif
                                                         @if ($i != $activeHour && !$isAdmin && !$allowTeachersSaveAtNotActiveHour)
                                                             disabled @endif

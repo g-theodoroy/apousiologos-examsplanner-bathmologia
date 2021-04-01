@@ -89,10 +89,10 @@ class TeachersController extends Controller
     foreach ($tmimata as $tmima) {
       if (trim($tmima)) {
         $data = explode ("->", $tmima);
-        Anathesi::updateOrCreate(['user_id' => $user->id, 'tmima' => trim($data[0]), 'mathima' => trim($data[1])], [
+        Anathesi::updateOrCreate(['user_id' => $user->id, 'tmima' => trim($data[0]), 'mathima' => trim($data[1] ?? null)], [
           'user_id' => $user->id,
           'tmima' => trim($data[0]),
-          'mathima' => trim($data[1]),
+          'mathima' => trim($data[1] ?? null),
         ]);
       }
     }

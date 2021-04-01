@@ -115,7 +115,7 @@ class HomeController extends Controller
           'patronimo' => $stuApFoD->patronimo,
           'tmima' => $stuApFoD->tmimata[0]->where('student_id', $stuApFoD->id)->orderByRaw('LENGTH(tmima)')->orderby('tmima')->first('tmima')->tmima,
           'tmimata' => $stuApFoD->tmimata[0]->where('student_id', $stuApFoD->id)->orderByRaw('LENGTH(tmima)')->orderby('tmima')->pluck('tmima')->implode(', '),
-          'apousies' => $apousiesForDate[$stuApFoD->id]
+          'apousies' => $apousiesForDate[$stuApFoD->id] ?? null
         ];
       }
       usort($arrStudents, function($a, $b) {
