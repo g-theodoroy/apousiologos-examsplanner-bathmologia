@@ -44,8 +44,11 @@ class GradeController extends Controller
 
         } // τέλος Αν έχει υποβληθεί η φόρμα
 
+        $selectedTmima = null;
+        $selectedMathima = null;
+        $gradesStudentsPeriod = null;
 
-         if ($selectedAnathesiId){
+        if ($selectedAnathesiId){
             $selectedAnathesi = Anathesi::find($selectedAnathesiId);
             $selectedTmima = $selectedAnathesi->tmima;
             $selectedMathima = $selectedAnathesi->mathima;
@@ -95,7 +98,7 @@ class GradeController extends Controller
                 'patronimo' => $stuApFoD->patronimo,
                 'tmima' => $stuApFoD->tmimata[0]->where('student_id', $stuApFoD->id)->orderByRaw('LENGTH(tmima)')->orderby('tmima')->first('tmima')->tmima,
                 'tmimata' => $stuApFoD->tmimata[0]->where('student_id', $stuApFoD->id)->orderByRaw('LENGTH(tmima)')->orderby('tmima')->pluck('tmima')->implode(', '),
-                'grade' => $grades[$stuApFoD->id]
+                'grade' => $grades[$stuApFoD->id] ?? null
             ];
         }
 

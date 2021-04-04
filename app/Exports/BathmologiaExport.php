@@ -69,7 +69,7 @@ class BathmologiaExport implements FromCollection, WithCustomStartCell, WithEven
             $arrStudents[$num]['onoma'] = $student->onoma;
             // προσθέτω τους βαθμούς ανά μάθημα
             foreach($mathimata as $mathima){
-                $arrStudents[$num][$mathima] =  $gradesPeriodLessons[$mathima];
+                $arrStudents[$num][$mathima] =  $gradesPeriodLessons[$mathima] ?? null;
             }
             $num++;
         }

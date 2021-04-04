@@ -280,7 +280,7 @@ if($insertToDB){
   // γεμίζω το xls
   foreach($amArr as $am=>$row){
     foreach($lessons as $lesson=>$col){
-        $sheet->getCellByColumnAndRow($col, $row)->setValue($finalGrades[$lesson][$am]);
+        $sheet->getCellByColumnAndRow($col, $row)->setValue($finalGrades[$lesson][$am] ?? null);
     }
   }
 

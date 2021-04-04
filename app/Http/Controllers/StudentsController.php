@@ -42,8 +42,8 @@ class StudentsController extends Controller
         'eponimo' => $stu->eponimo,
         'onoma' => $stu->onoma,
         'patronimo' => $stu->patronimo,
-        'tmimata' => $stu->tmimata[0] ? $stu->tmimata[0]->where('student_id', $stu->id)->orderByRaw('LENGTH(tmima)')->orderby('tmima')->pluck('tmima')->toArray() : [],
-        'apousies' => $stu->apousies[0] ? $stu->apousies[0]->where('student_id', $stu->id)->pluck('apousies')->toArray() : []
+        'tmimata' => $stu->tmimata[0] ?? null  ? $stu->tmimata[0]->where('student_id', $stu->id)->orderByRaw('LENGTH(tmima)')->orderby('tmima')->pluck('tmima')->toArray() : [],
+        'apousies' => $stu->apousies[0] ?? null ? $stu->apousies[0]->where('student_id', $stu->id)->pluck('apousies')->toArray() : []
       ];
     }
 

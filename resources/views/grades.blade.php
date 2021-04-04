@@ -16,9 +16,11 @@
                                          <p class="box card-header-title level-item column">
                                              @php($mathima = '')
                                             @foreach ($anatheseis as $anathesi)
-                                                {{ $anathesi->mathima !== $mathima ? $anathesi->mathima . ': ' : ''}}
-                                                @php($mathima = $anathesi->mathima)
-                                                <a href="{{ url('grades', $anathesi->id) }}">{{ $anathesi->tmima }}</a>&nbsp;
+                                                @if($anathesi->mathima)
+                                                    {{ $anathesi->mathima !== $mathima ? $anathesi->mathima . ': ' : ''}}
+                                                    @php($mathima = $anathesi->mathima)
+                                                    <a href="{{ url('grades', $anathesi->id) }}">{{ $anathesi->tmima }}</a>&nbsp;
+                                                @endif
                                             @endforeach
                                             @if ($isAdmin)
                                                 <a
@@ -86,7 +88,7 @@
                                                                 </td>
                                                                 @if(App\Config::getConfigValueOf('showOtherGrades'))
                                                                 <td>
-                                                                    @if( $gradesPeriodLessons[$student['id']] )
+                                                                    @if( $gradesPeriodLessons[$student['id']] ?? null )
                                                                         <a href="javascript:showModal({{$student['id']}})" title="Βαθμοί σε άλλα μαθήματα"><i class="fa fa-eye" aria-hidden="true"></i></a>
                                                                     @endif
                                                                 </td>
@@ -100,7 +102,7 @@
                                                                                     value="{{ $student['grade'] }}" type="text"  />
                                                                             </td>
                                                                         @else
-                                                                            <td class="has-text-centered">{{ $gradesStudentsPeriod[$student['id']][$period->id] }}</td>
+                                                                            <td class="has-text-centered">{{ $gradesStudentsPeriod[$student['id']][$period->id] ?? null }}</td>
                                                                         @endif
                                                                     @endif
                                                                 @endforeach
@@ -185,7 +187,7 @@
                                     @endforeach
                                 </tr>
                                 @foreach ($mathimata as $mathima)
-                                @if($data[$mathima])
+                                @if($data[$mathima] ?? null)
                                 <tr>
                                     @if($selectedMathima == $mathima)
                                         <td><b>{{ $mathima }}</b></td>
@@ -194,7 +196,7 @@
                                     @endif
                                     @foreach (App\Period::all() as $period)
                                         @if($period->id <= App\Config::getConfigValueOf('activeGradePeriod'))
-                                            <td class="has-text-centered"> {{$data[$mathima][$period->id]}}</td>
+                                            <td class="has-text-centered"> {{$data[$mathima][$period->id] ?? null }}</td>
                                         @endif
                                     @endforeach
                                 </tr>

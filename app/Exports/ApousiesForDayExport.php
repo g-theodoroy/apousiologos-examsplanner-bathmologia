@@ -46,7 +46,7 @@ class ApousiesForDayExport implements FromView, ShouldAutoSize, WithEvents
         $nowDate = Carbon::now()->format("Ymd");
         $arrStudents = array();
 
-        if ($apoDate && $eosDate) {
+        if (isset($apoDate) && isset($eosDate)) {
             // βρίσκω τους μαθητές που έχουν απουσίες την συγκεκριμμένη ημέρα
             $students = Student::whereHas('apousies', function ($query) use ($apoDate, $eosDate) {
                 $query->where('date', '>=', $apoDate)->where('date', '<=', $eosDate);
@@ -63,7 +63,7 @@ class ApousiesForDayExport implements FromView, ShouldAutoSize, WithEvents
           'apousies' => $stuApFoD->apousies[0]->where('student_id', $stuApFoD->id)->where('date', '>=', $apoDate)->where('date', '<=', $eosDate)->orderby('date')->pluck('apousies', 'date')->toArray(),
         ];
             }
-        } elseif ($apoDate) {
+        } elseif (isset($apoDate)) {
             // βρίσκω τους μαθητές που έχουν απουσίες την συγκεκριμμένη ημέρα
             $students = Student::whereHas('apousies', function ($query) use ($apoDate) {
                 $query->where('date', '>=', $apoDate);
@@ -80,7 +80,7 @@ class ApousiesForDayExport implements FromView, ShouldAutoSize, WithEvents
           'apousies' => $stuApFoD->apousies[0]->where('student_id', $stuApFoD->id)->where('date', '>=', $apoDate)->orderby('date')->pluck('apousies', 'date')->toArray(),
         ];
             }
-        } elseif ($eosDate) {
+        } elseif (isset($eosDate)) {
             // βρίσκω τους μαθητές που έχουν απουσίες την συγκεκριμμένη ημέρα
             $students = Student::whereHas('apousies', function ($query) use ($eosDate) {
                 $query->where('date', '<=', $eosDate);
