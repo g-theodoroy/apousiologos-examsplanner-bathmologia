@@ -73,6 +73,8 @@ class HomeController extends Controller
             $lastPreviousDay = Carbon::now()->subDays(Config::getConfigValueOf('pastDaysInsertApousies'))->format("Ymd");
             if ($date > $today) $date = $today;
             if ($date < $lastPreviousDay) $date = $lastPreviousDay;
+          }else{
+            $date = Carbon::now()->format("Ymd");
           }
         }
       }
