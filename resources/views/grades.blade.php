@@ -269,17 +269,17 @@
                         var gradeAlert = false
                         for(let field of document.forms['frm'].elements) {
                             if (field.name && field.name.substr(0,1) == 'b'){
+                                $('#' + field.name).removeClass("is-danger")
                                 if(field.value){
                                     if(parseFloat(field.value.replace(',', '.')) < gradeBase){
                                         gradeAlert = true
-                                        break
+                                        $('#' + field.name).addClass("is-danger")
                                     }
-                                    
                                 }
                             }
                         }
                         if(gradeAlert){
-                            if( ! confirm('Καταχωρίζετε βαθμούς κάτω από τη "βάση" του ' + gradeBase + '.\n\nΘέλετε ωστόσο να προχωρήσετε;')) return
+                            if( ! confirm('Καταχωρίζετε βαθμούς κάτω από τη "βάση" του ' + gradeBase + '.\n\nΘέλετε ωστόσο να συνεχίσετε;')) return
                         }
                     @endif
                     $('#frm').submit()
