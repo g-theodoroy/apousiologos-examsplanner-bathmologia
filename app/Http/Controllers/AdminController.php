@@ -106,6 +106,7 @@ class AdminController extends Controller
     Config::setConfigValueOf('activeGradePeriod', request()->input('activeGradePeriod'));
     Config::setConfigValueOf('showOtherGrades', request()->input('showOtherGrades'));
     Config::setConfigValueOf('pastDaysInsertApousies', request()->input('pastDaysInsertApousies'));
+    Config::setConfigValueOf('gradeBaseAlert', request()->input('gradeBaseAlert'));
     return redirect()->route('admin')->with( ['setDone' => 1] );
   }
 

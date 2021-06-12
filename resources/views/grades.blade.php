@@ -262,6 +262,26 @@
                             }
                         }
                     }
+                    // έλεγχος αν από λάθος πληκτρολόγηση καταχωρίζονται βαθμοί 
+                    // κάτω από τη βάση 'gradeBaseAlert' και ειδοποίηση του χρήστη
+                    @if(App\Config::getConfigValueOf('gradeBaseAlert'))
+                        const gradeBase = parseFloat({{ App\Config::getConfigValueOf('gradeBaseAlert') }})
+                        var gradeAlert = false
+                        for(let field of document.forms['frm'].elements) {
+                            if (field.name && field.name.substr(0,1) == 'b'){
+                                if(field.value){
+                                    if(parseFloat(field.value.replace(',', '.')) < gradeBase){
+                                        gradeAlert = true
+                                        break
+                                    }
+                                    
+                                }
+                            }
+                        }
+                        if(gradeAlert){
+                            if( ! confirm('Καταχωρίζετε βαθμούς κάτω από τη "βάση" του ' + gradeBase + '.\n\nΘέλετε ωστόσο να προχωρήσετε;')) return
+                        }
+                    @endif
                     $('#frm').submit()
                 }
                 function showModal(id){

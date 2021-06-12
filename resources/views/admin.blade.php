@@ -111,6 +111,10 @@
                       </div>
                    </td>
                   </tr>
+                    <tr>
+                      <td>Ειδοποίηση αν καταχωρίζονται βαθμοί κάτω από {{ App\Config::getConfigValueOf('gradeBaseAlert') }}</td>
+                      <td class="has-text-centered"><input name="gradeBaseAlert" class="input has-text-centered" type="text" value="{{App\Config::getConfigValueOf('gradeBaseAlert')}}" placeholder="10" ></td>
+                   </tr>
                   <tr>
                   <td class="has-text-centered" colspan="2">
                     <button class="button" type="submit">
