@@ -184,6 +184,8 @@ class HomeController extends Controller
       // επιτρέπεται η καταχώριση το ΣΚ
       $allowWeekends = Config::getConfigValueOf('allowWeekends');
       // αν θέλουμε τις ώρες ξεκλείδωτες ή είμαστε Διαχειριστής
+      // αρχικοποίηση μεταβλητής
+      $hoursUnlocked = 0;
       if(Config::getConfigValueOf('hoursUnlocked') || Auth::user()->role_description() == "Διαχειριστής") $hoursUnlocked = 1;
       // επιτρέπεται στους να ξεκλειδώσουν τις ώρες;
       $letTeachersUnlockHours = Config::getConfigValueOf('letTeachersUnlockHours');
