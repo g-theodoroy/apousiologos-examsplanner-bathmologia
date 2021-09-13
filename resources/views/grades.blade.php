@@ -117,11 +117,6 @@
                                                 <p class="card-header-title level-item">
                                                         {{ $selectedTmima }} -> {{ $selectedMathima}}
                                                 </p>
-                                                @if (!$isAdmin && !$activeHour && !$hoursUnlocked)
-                                                    <p class="card-header-title level-item">
-                                                        Εκτός ωραρίου
-                                                    </p>
-                                                @endif
                                                         <a class="button level-item" onclick="formValidate()">
                                                             <span class="icon">
                                                                 <i class="fa fa-save"></i>
