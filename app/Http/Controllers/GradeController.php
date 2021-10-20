@@ -27,17 +27,19 @@ class GradeController extends Controller
 
     public function index($selectedAnathesiId = 0)
     {
+        $activeGradePeriod = Config::getConfigValueOf('activeGradePeriod');
+        
         // Αν έχει υποβληθεί η φόρμα
         if (request()->method() == 'POST') {
 
             $data = request()->except(['_token']);
             foreach ($data as $am=>$grade){
                 if ($grade){
-                    Grade::updateOrCreate(['anathesi_id' => $selectedAnathesiId, 'student_id' =>  ltrim($am, 'b'),'period_id' => Config::getConfigValueOf('activeGradePeriod') ], [
+                    Grade::updateOrCreate(['anathesi_id' => $selectedAnathesiId, 'student_id' =>  ltrim($am, 'b'),'period_id' =>  $activeGradePeriod], [
                         'grade' => str_replace(".",",",$grade),
                     ]);
                 }else{
-                    Grade::where('anathesi_id', $selectedAnathesiId )->where('student_id', ltrim($am, 'b'))->where('period_id', Config::getConfigValueOf('activeGradePeriod') )->delete();
+                    Grade::where('anathesi_id', $selectedAnathesiId )->where('student_id', ltrim($am, 'b'))->where('period_id', $activeGradePeriod)->delete();
                 }
              }
 
@@ -52,7 +54,7 @@ class GradeController extends Controller
             $selectedAnathesi = Anathesi::find($selectedAnathesiId);
             $selectedTmima = $selectedAnathesi->tmima;
             $selectedMathima = $selectedAnathesi->mathima;
-            $grades = Grade::where('anathesi_id', $selectedAnathesiId)->where('period_id', Config::getConfigValueOf('activeGradePeriod'))->pluck('grade', 'student_id');
+            $grades = Grade::where('anathesi_id', $selectedAnathesiId)->where('period_id', $activeGradePeriod)->pluck('grade', 'student_id');
             $allGrades = Grade::where('anathesi_id', $selectedAnathesiId)->get(['grade', 'student_id', 'period_id'])->toArray();
             $gradesStudentsPeriod = array();
             foreach($allGrades as $gr){
@@ -67,7 +69,7 @@ class GradeController extends Controller
         $anatheseis = Auth::user()->anatheseis()->orderby('mathima')->orderByRaw('LENGTH(tmima)')->orderby('tmima')->get();
 
         // αν είναι Διαχειριστής τα παίρνω όλα από μια φορά
-        if (Auth::user()->role_description() == "Διαχειριστής") {
+        if (Auth::user()->role->role == "Διαχειριστής") {
             $anatheseis = Anathesi::orderby('mathima')->orderByRaw('LENGTH(tmima)')->orderby('tmima')->get();
         }
 
@@ -81,7 +83,7 @@ class GradeController extends Controller
             $student_ids = Tmima::where('tmima', $selectedTmima)->pluck('student_id')->toArray();
 
             // παίρνω τα στοιχεία των μαθητών ταξινομημένα κσι φιλτράρω μόνο τους ΑΜ που έχει το τμήμα
-            $students = Student::orderby('eponimo')->orderby('onoma')->orderby('patronimo')->with('tmimata')->get()->only($student_ids);
+            $students = Student::orderby('eponimo')->orderby('onoma')->orderby('patronimo')->with('tmimata')->with('anatheseis')->get()->only($student_ids);
         }
 
         $arrStudents = array();
@@ -91,13 +93,14 @@ class GradeController extends Controller
                 $gradesPeriodLessons[$stuApFoD->id]['name'] = $stuApFoD->eponimo . ' ' . $stuApFoD->onoma;
                 $gradesPeriodLessons[$stuApFoD->id][$anath->mathima][$anath->pivot->period_id] = $anath->pivot->grade;
             }
+            $tmimata = $stuApFoD->tmimata->pluck('tmima');
             $arrStudents[] = [
                 'id' => $stuApFoD->id,
                 'eponimo' => $stuApFoD->eponimo,
                 'onoma' => $stuApFoD->onoma,
                 'patronimo' => $stuApFoD->patronimo,
-                'tmima' => $stuApFoD->tmimata[0]->where('student_id', $stuApFoD->id)->orderByRaw('LENGTH(tmima)')->orderby('tmima')->first('tmima')->tmima,
-                'tmimata' => $stuApFoD->tmimata[0]->where('student_id', $stuApFoD->id)->orderByRaw('LENGTH(tmima)')->orderby('tmima')->pluck('tmima')->implode(', '),
+                'tmima' => $tmimata[0],
+                'tmimata' => $tmimata->implode(', '),
                 'grade' => $grades[$stuApFoD->id] ?? null
             ];
         }
@@ -112,8 +115,10 @@ class GradeController extends Controller
 
         $mathimata = Anathesi::select('mathima')->distinct()->orderBy('mathima')->pluck('mathima')->toArray();
 
+        $periods = Period::all();
+        $showOtherGrades = Config::getConfigValueOf('showOtherGrades');
 
-        return view('grades', compact('anatheseis','selectedAnathesiId', 'selectedTmima', 'selectedMathima', 'arrStudents', 'gradesStudentsPeriod',  'gradesPeriodLessons', 'mathimata'));
+        return view('grades', compact('anatheseis','selectedAnathesiId', 'selectedTmima', 'selectedMathima', 'arrStudents', 'gradesStudentsPeriod',  'gradesPeriodLessons', 'mathimata', 'activeGradePeriod', 'periods', 'showOtherGrades'));
     }
 
     public function exportGradesXls(){

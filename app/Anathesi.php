@@ -21,7 +21,7 @@ class Anathesi extends Model
 
   public static function countMathimata()
   {
-    $isAdmin = Auth::user()->role_description() == 'Διαχειριστής';
+    $isAdmin = Auth::user()->role->role == 'Διαχειριστής';
     if ($isAdmin) return true;
 
     $mathimata = Anathesi::select('mathima')->where('user_id', Auth::user()->id)->where('mathima', "<>", "")->distinct()->count();

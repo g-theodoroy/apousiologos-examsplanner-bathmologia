@@ -44,11 +44,7 @@ class User extends Authenticatable
         return $this->hasMany('App\Event');
     }
 
-    public function role_description()
-    {
-        return User::role()->first()->role;
-    }
-
+   
     public function get_num_of_admins()
     {
         if (!Schema::hastable('roles')) {

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@php($isAdmin = Auth::user()->role_description() == 'Διαχειριστής')
+@php($isAdmin = Auth::user()->role->role == 'Διαχειριστής')
 
     @section('content')
 

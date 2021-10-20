@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@php($isAdmin = Auth::user()->role_description() == 'Διαχειριστής')
+@php($isAdmin = Auth::user()->role->role == 'Διαχειριστής')
 
     @section('content')
 
@@ -25,7 +25,7 @@
                                         <p class="box card-header-title level-item column">
                                             @foreach ($anatheseis as $anathesi)
                                                 <a
-                                                    href="{{ url('/home', $anathesi->tmima) }}/{{ !$isAdmin && $setCustomDate ? Carbon\Carbon::createFromFormat('!d/m/y', $setCustomDate)->format('Ymd') : Carbon\Carbon::createFromFormat('!d/m/y', $date)->format('Ymd') }}">{{ $anathesi->tmima }}</a>&nbsp;
+                                                    href="{{ url('/home', $anathesi) }}/{{ !$isAdmin && $setCustomDate ? Carbon\Carbon::createFromFormat('!d/m/y', $setCustomDate)->format('Ymd') : Carbon\Carbon::createFromFormat('!d/m/y', $date)->format('Ymd') }}">{{ $anathesi }}</a>&nbsp;
                                             @endforeach
                                             @if ($isAdmin)
                                                 <a
@@ -114,11 +114,11 @@
                                                             @foreach ($taxeis as $taxi)
                                                                 <tr>
                                                                     <th class='has-text-centered'>{{ $taxi }}</th>
-                                                                    @foreach ($sumApousies[$taxi]['eq'] as $key => $value)
+                                                                    @foreach ($sumApousies[$taxi]['equal'] as $key => $value)
                                                                         <th class='has-text-centered'>{{ $value ? $value : '' }}
                                                                         </th>
                                                                     @endforeach
-                                                                    @foreach ($sumApousies[$taxi]['ov'] as $key => $value)
+                                                                    @foreach ($sumApousies[$taxi]['over'] as $key => $value)
                                                                         <th class='has-text-centered'>{{ $value ? $value : '' }}
                                                                         </th>
                                                                     @endforeach
@@ -129,13 +129,13 @@
                                                             <tfoot>
                                                                 <tr>
                                                                     <th style="background-color: #f2f2f2;">Σύνολα</th>
-                                                                    @foreach ($sumApousies['sums']['eq'] as $key => $value)
+                                                                    @foreach ($sumApousies['sums']['equal'] as $key => $value)
                                                                         <th class='has-text-centered'
                                                                             style="background-color: #f2f2f2;">
                                                                             {{ $value ? $value : '' }}
                                                                         </th>
                                                                     @endforeach
-                                                                    @foreach ($sumApousies['sums']['ov'] as $key => $value)
+                                                                    @foreach ($sumApousies['sums']['over'] as $key => $value)
                                                                         <th class='has-text-centered'
                                                                             style="background-color: #f2f2f2;">
                                                                             {{ $value ? $value : '' }}

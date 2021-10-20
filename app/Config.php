@@ -12,7 +12,7 @@ class Config extends Model
   public static function getConfigValueOf($key) {
       if( Schema::hasTable('configs')){
         $c = null;
-        $c = Config::firstOrCreate(['key' => $key]) ? Config::firstOrCreate(['key' => $key]) : null;
+        $c = Config::firstOrCreate(['key' => $key]);
         if($c){
           return $c->value;
         }else{
@@ -23,8 +23,9 @@ class Config extends Model
   }
 
   public static function setConfigValueOf($key, $value) {
-      $c = Config::firstOrCreate(['key' => $key]);
-    $c->update(['value' => $value]);
+      $c = Config::updateOrCreate(['key' => $key],
+        ['value' => $value]
+      );
     return ;
   }
 

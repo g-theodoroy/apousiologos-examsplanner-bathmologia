@@ -34,7 +34,7 @@ class FullCalendarController extends Controller
 
     public function data()
     {
-        $isAdmin = Auth::user()->role_description() == 'Διαχειριστής';
+        $isAdmin = Auth::user()->role->role == 'Διαχειριστής';
 
         $start = !empty($_GET["start"]) ? substr($_GET["start"], 0, 10) : '';
         $end = !empty($_GET["end"]) ? substr($_GET["end"], 0, 10) : '';
@@ -49,7 +49,7 @@ class FullCalendarController extends Controller
     }
 
     public function mathimata(){
-        $isAdmin = Auth::user()->role_description() == 'Διαχειριστής';
+        $isAdmin = Auth::user()->role->role == 'Διαχειριστής';
 
         $mathimata = Anathesi::select('mathima');
         if (!$isAdmin) {
@@ -67,7 +67,7 @@ class FullCalendarController extends Controller
         $date = $request->start;
         $week = $request->week;
         $user_id = Auth::user()->id;
-        $isAdmin = Auth::user()->role_description() == 'Διαχειριστής';
+        $isAdmin = Auth::user()->role->role == 'Διαχειριστής';
 
         $maxDiagonismataForDay = Config::getConfigValueOf('maxDiagonismataForDay');
         $maxDiagonismataForWeek = Config::getConfigValueOf('maxDiagonismataForWeek');
@@ -251,7 +251,7 @@ class FullCalendarController extends Controller
 
     public function events()
     {
-        $isAdmin = Auth::user()->role_description() == 'Διαχειριστής';
+        $isAdmin = Auth::user()->role->role == 'Διαχειριστής';
         $year = Carbon::now()->format('Y');
         $month = Carbon::now()->format('m');
         $chkDate = Carbon::now()->format('Y-m-d');

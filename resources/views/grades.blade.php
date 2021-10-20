@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@php($isAdmin = Auth::user()->role_description() == 'Διαχειριστής')
+@php($isAdmin = Auth::user()->role->role == 'Διαχειριστής')
 
     @section('content')
 
@@ -34,7 +34,7 @@
                                         <div class="columns is-mobile is-centered">
                                             <div class="column is-narrow level">
                                                 <div class="has-text-centered has-text-weight-bold is-size-4">
-                                                    {{App\Period::find(App\Config::getConfigValueOf('activeGradePeriod'))->period}}
+                                                    {{$periods->find($activeGradePeriod)->period }}
                                                 </div>
                                             </div>
                                         </div>
@@ -67,11 +67,11 @@
                                                         <tr>
                                                             <th>&nbsp;</th>
                                                             <th>Ονοματεπώνυμο</th>
-                                                            @if(App\Config::getConfigValueOf('showOtherGrades'))
+                                                            @if($showOtherGrades)
                                                             <th>&nbsp;</th>
                                                             @endif
-                                                            @foreach (App\Period::all() as $period)
-                                                                @if($period->id <= App\Config::getConfigValueOf('activeGradePeriod'))
+                                                            @foreach ($periods as $period)
+                                                                @if($period->id <= $activeGradePeriod)
                                                                     <th class="has-text-centered">{{ mb_substr($period->period, 0 , 6 ) }}</th>
                                                                 @endif
                                                             @endforeach
@@ -86,16 +86,16 @@
                                                                 <td>
                                                                     {{ $student['eponimo'] }} {{ $student['onoma'] }}
                                                                 </td>
-                                                                @if(App\Config::getConfigValueOf('showOtherGrades'))
+                                                                @if($showOtherGrades)
                                                                 <td>
                                                                     @if( $gradesPeriodLessons[$student['id']] ?? null )
                                                                         <a href="javascript:showModal({{$student['id']}})" title="Βαθμοί σε άλλα μαθήματα"><i class="fa fa-eye" aria-hidden="true"></i></a>
                                                                     @endif
                                                                 </td>
                                                                 @endif
-                                                                @foreach (App\Period::all() as $period)
-                                                                    @if($period->id <= App\Config::getConfigValueOf('activeGradePeriod'))
-                                                                        @if($period->id == App\Config::getConfigValueOf('activeGradePeriod'))
+                                                                @foreach ($periods as $period)
+                                                                    @if($period->id <= $activeGradePeriod)
+                                                                        @if($period->id == $activeGradePeriod)
                                                                             <td style="width: 70px;" >
                                                                                 <input class="input has-text-centered is-small" id="b{{ $student['id'] }}"
                                                                                     name="b{{ $student['id'] }}"
@@ -175,8 +175,8 @@
                             <table class="table is-fullwidth">
                                 <tr>
                                     <th>Μάθημα</th>
-                                    @foreach (App\Period::all() as $period)
-                                        @if($period->id <= App\Config::getConfigValueOf('activeGradePeriod'))
+                                    @foreach ($periods as $period)
+                                        @if($period->id <= $activeGradePeriod)
                                             <th class="has-text-centered">{{ mb_substr($period->period, 0 , 6 ) }}</th>
                                         @endif
                                     @endforeach
@@ -189,8 +189,8 @@
                                     @else
                                         <td>{{ $mathima }}</td>
                                     @endif
-                                    @foreach (App\Period::all() as $period)
-                                        @if($period->id <= App\Config::getConfigValueOf('activeGradePeriod'))
+                                    @foreach ($periods as $period)
+                                        @if($period->id <= $activeGradePeriod)
                                             <td class="has-text-centered"> {{$data[$mathima][$period->id] ?? null }}</td>
                                         @endif
                                     @endforeach
@@ -233,7 +233,7 @@
                     for(let field of document.forms['frm'].elements) {
                         if (field.name && field.name.substr(0,1) == 'b'){
                             if(field.value){
-                                @if(App\Config::getConfigValueOf('activeGradePeriod') < 3)
+                                @if($activeGradePeriod < 3)
                                  if( field.value != 'Α' && field.value != 'Δ' && parseInt(field.value) != field.value){
                                     $('#' + field.name).addClass("is-danger")
                                     $('#errorModalContent').html('<div>Πληκτρολογείστε μόνο:</div><div class="column is-offset-1">&#8226; ακέραιους αριθμούς</div><div class="column is-offset-1">&#8226; Α => "Απαλλαγή"</div><div class="column is-offset-1">&#8226; Δ => "Δεν έχω άποψη"</div>')

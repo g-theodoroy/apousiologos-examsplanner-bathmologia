@@ -43,7 +43,7 @@
                             @endif
                         @else
 
-                            @if (Auth::user()->role_description() == 'Διαχειριστής')
+                            @if (Auth::user()->role->role == 'Διαχειριστής')
 
                                 <div class="navbar-item has-dropdown is-hoverable">
                                     <a class="navbar-link" href="#">Διαχειριστής</a>

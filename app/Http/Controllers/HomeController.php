@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\User;
 use App\Student;
 use App\Tmima;
 use App\Program;
@@ -32,6 +30,10 @@ class HomeController extends Controller
      */
     public function index($selectedTmima = 0, $date = null )
     {
+      // μεταβλητές
+      $isAdmin = Auth::user()->role->role == "Διαχειριστής";
+      $settings = Config::getConfigValues();
+
       // Αν έχει υποβληθεί η φόρμα
       if(request()->method() == 'POST'){
 
@@ -59,18 +61,18 @@ class HomeController extends Controller
       // αρχικοποιώ την ημέρα αν δεν έχει έρθει με το url
       if(! $date) $date = Carbon::now()->format("Ymd");
       // αν έχει οριστεί συγκεκριμμένη ημέρα από τον Διαχειριστή
-      $setCustomDate = Config::getConfigValueOf('setCustomDate');
+      $setCustomDate = $settings['setCustomDate'];
       // αν ο χρήστης δεν είναι Διαχειριστής
-      if(Auth::user()->role_description() !== "Διαχειριστής"){
+      if( !$isAdmin ){
         if($setCustomDate){
           // ή η συγκεκριμμένη ημέρα
           $date = Carbon::createFromFormat("!d/m/y", $setCustomDate)->format("Ymd");
         }else{
           // έλεγχος ότι ο μη διαχειριστής δεν μπορεί να πάει
           // σε μελλοντική ημερομηνία ή παρελθούσα πριν την μέγιστη επιτρεπόμενη
-          if(Config::getConfigValueOf('pastDaysInsertApousies')){
+          if($settings['pastDaysInsertApousies']){
             $today = Carbon::now()->format("Ymd");
-            $lastPreviousDay = Carbon::now()->subDays(Config::getConfigValueOf('pastDaysInsertApousies'))->format("Ymd");
+            $lastPreviousDay = Carbon::now()->subDays($settings['pastDaysInsertApousies'])->format("Ymd");
             if ($date > $today) $date = $today;
             if ($date < $lastPreviousDay) $date = $lastPreviousDay;
           }else{
@@ -81,15 +83,15 @@ class HomeController extends Controller
 
       // παίρνω τα τμηματα του χρήστη
       // ταξινόμηση με το μήκος του ονόματος + αλφαβητικά
-      $anatheseis = Auth::user()->anatheseis()->orderByRaw('LENGTH(tmima)')->orderby('tmima')->get();
+      $anatheseis = Auth::user()->anatheseis->sortBy('LENGTH(tmima)')->sortBy('tmima')->pluck('tmima');
 
       // αν είναι Διαχειριστής τα παίρνω όλα από μια φορά
-      if( Auth::user()->role_description() == "Διαχειριστής"){
-        $anatheseis = Anathesi::orderByRaw('LENGTH(tmima)')->orderby('tmima')->distinct()->get('tmima');
+      if( $isAdmin ){
+        $anatheseis = Anathesi::orderByRaw('LENGTH(tmima)')->orderby('tmima')->distinct()->pluck('tmima');
       }
 
       // αν το τμήμα που δόθηκε στο url δεν αντιστοιχεί στον χρήστη επιστρέφω πίσω
-      if ($selectedTmima && ! $anatheseis->where('tmima',$selectedTmima)->count()) return back();
+      if ($selectedTmima && ! $anatheseis->contains($selectedTmima)) return back();
 
       // βάζω σε πίνακα [ΑΜ]=απουσίες για την ημέρα
       $apousiesForDate = Apousie::where('date', $date)->pluck('apousies', 'student_id')->toArray();
@@ -99,27 +101,35 @@ class HomeController extends Controller
         $student_ids = Tmima::where('tmima', $selectedTmima)->pluck('student_id')->toArray();
 
         // παίρνω τα στοιχεία των μαθητών ταξινομημένα κσι φιλτράρω μόνο τους ΑΜ που έχει το τμήμα
-        $students = Student::orderby('eponimo')->orderby('onoma')->orderby('patronimo')->with('tmimata')->get()->only($student_ids);
+        $students = Student::select('id','eponimo','onoma', 'patronimo')->orderby('eponimo')->orderby('onoma')->orderby('patronimo')->with('tmimata:student_id,tmima')->get()->only($student_ids);
 
     }else{ // δεν είναι επιλεγμένο τμήμα = όλοι όσοι έχουν απουσίες
         // βρίσκω τους μαθητές που έχουν απουσίες την συγκεκριμμένη ημέρα
-        $students = Student::whereHas('apousies', function ($query) use ($date) {
+        $students = Student::select('id','eponimo','onoma', 'patronimo')
+        ->whereHas('apousies', function ($query) use ($date) {
           $query->where('date', '=', $date);
-        })->orderby('eponimo')->orderby('onoma')->orderby('patronimo')->with('tmimata')->get();
+        })->orderby('eponimo')->orderby('onoma')->orderby('patronimo')->with('tmimata:student_id,tmima')->get('id','eponimo','onoma', 'patronimo');
     }
 
+      // φτιάχνω πίνακα με τα στοιχεία που θα εμφανίσω
       $arrStudents = array();
       foreach($students as $stuApFoD){
+        $tmimata = $stuApFoD->tmimata->pluck('tmima');
         $arrStudents[] = [
           'id' => $stuApFoD->id,
           'eponimo' => $stuApFoD->eponimo,
           'onoma' => $stuApFoD->onoma,
           'patronimo' => $stuApFoD->patronimo,
-          'tmima' => $stuApFoD->tmimata[0]->where('student_id', $stuApFoD->id)->orderByRaw('LENGTH(tmima)')->orderby('tmima')->first('tmima')->tmima,
-          'tmimata' => $stuApFoD->tmimata[0]->where('student_id', $stuApFoD->id)->orderByRaw('LENGTH(tmima)')->orderby('tmima')->pluck('tmima')->implode(', '),
+          // παίρνω το πρώτο τμήμα με το λιγότερο μήκος σαν βασικό τμήμα
+          // υποθέτοντας ότι συνήθως τα τμήματα γενικής τα γράφουμε σύντομα πχ Α1 αντί Α1-ΑΓΓΛΙΚΑ
+          'tmima' => $tmimata[0],
+          // παίρνω όλα τα τμήματα και φτιάχνω string χωρισμένο με κόμμα (,)
+          'tmimata' => $tmimata->implode(', '),
+          // αν υπάρχουν απουσίες για την συγκεκριμμένη ημέρα  για το μαθητή. Μορφή: '1111000' 
           'apousies' => $apousiesForDate[$stuApFoD->id] ?? null
         ];
       }
+      // ταξινόμηση πίνακα
       usort($arrStudents, function($a, $b) {
       return $a['tmima'] <=> $b['tmima'] ?:
              $a['eponimo'] <=> $b['eponimo'] ?:
@@ -127,48 +137,65 @@ class HomeController extends Controller
              strnatcasecmp($a['patronimo'], $b['patronimo']);
            });
 
+      // φτιάχνω πίνακα με τις απουσίες της ημέρας
+      // ανά ΤΑΞΗ
+      // πόσες είναι ίσες με 1, 2, 3, 4, 5, 6, 7
+      // πόσες είναι πάνω από 1, 2, 3, 4, 5, 6
+
+      // παίρνω το 1ο γράμμα του τμήματος σαν τάξη: Α1 -> Α ΒΘΕΤ -> Β
       $taxeis = array();
       foreach( $arrStudents as $stu){
         if (! in_array(mb_substr($stu['tmima'], 0 , 1), $taxeis))$taxeis[] = mb_substr($stu['tmima'], 0 , 1);
       }
 
+      // αρχικοποίηση του πίνακα με 0
       $sumApousies = array();
       foreach ($taxeis as $taxi){
         for($i = 1 ; $i < 8 ; $i++){
-          $sumApousies[$taxi]['eq'][$i]= 0;
+          $sumApousies[$taxi]['equal'][$i]= 0;
         }
         for($i = 1 ; $i < 7 ; $i++){
-          $sumApousies[$taxi]['ov'][$i]= 0;
+          $sumApousies[$taxi]['over'][$i]= 0;
         }
       }
       for($i = 1 ; $i < 8 ; $i++){
-        $sumApousies['sums']['eq'][$i]= 0;
+        $sumApousies['sums']['equal'][$i]= 0;
       }
       for($i = 1 ; $i < 7 ; $i++){
-        $sumApousies['sums']['ov'][$i]= 0;
+        $sumApousies['sums']['over'][$i]= 0;
       }
 
+      // αποθηκεύω την αρχική κατάσταση με 0
       $sumApousiesCheck = $sumApousies;
+      // για κάθε μαθητή
       foreach( $arrStudents as $stu){
+        // προσθέτω τις απουσίες "0001111" -> 4 
         $appSum = array_sum(preg_split("//",$stu['apousies']));
+        // για κάθε τάξη
         foreach ($taxeis as $taxi){
+          // αν ο μαθητής είναι στην τάξη = 1ο γράμμα τμήματος
           if ($taxi == mb_substr($stu['tmima'], 0 , 1)){
             for($i = 1 ; $i < 8 ; $i++){
-              if($appSum == $i) $sumApousies[$taxi]['eq'][$i]= $sumApousies[$taxi]['eq'][$i] + 1;
+              // προσθέτω πόσες φορές το άθροισμα είναι ίσο με τη τιμή 1,2,3,4,5,6,7
+              if($appSum == $i) $sumApousies[$taxi]['equal'][$i]= $sumApousies[$taxi]['equal'][$i] + 1;
             }
             for($i = 1 ; $i < 7 ; $i++){
-              if($appSum >= $i) $sumApousies[$taxi]['ov'][$i]= $sumApousies[$taxi]['ov'][$i] + 1;
+              // προσθέτω πόσες φορές το άθροισμα είναι ίσο ή μεγαλύτερο από τη τιμή 1,2,3,4,5,6
+              if($appSum >= $i) $sumApousies[$taxi]['over'][$i]= $sumApousies[$taxi]['over'][$i] + 1;
             }
           }
         }
         for($i = 1 ; $i < 8 ; $i++){
-          if($appSum == $i) $sumApousies['sums']['eq'][$i]= $sumApousies['sums']['eq'][$i] + 1;
+          // γενικά σύνολα όλων των τάξεων πόσες φορές το άθροισμα είναι ίσο με τη τιμή 1,2,3,4,5,6,7
+          if($appSum == $i) $sumApousies['sums']['equal'][$i]= $sumApousies['sums']['equal'][$i] + 1;
         }
         for($i = 1 ; $i < 7 ; $i++){
-          if($appSum >= $i) $sumApousies['sums']['ov'][$i]= $sumApousies['sums']['ov'][$i] + 1;
+          // γενικά σύνολα όλων των τάξεων πόσες φορές το άθροισμα είναι ίσο ή μεγαλύτερο από τη τιμή 1,2,3,4,5,6
+          if($appSum >= $i) $sumApousies['sums']['over'][$i]= $sumApousies['sums']['over'][$i] + 1;
         }
       }
 
+      // αν δεν προστέθηκαν απουσίες αδειάζω τελείως τον πίνακα $sumApousies
       if ($sumApousiesCheck == $sumApousies) $sumApousies = [];
 
       //διαβάζω ρυθμίσεις από τον πίνακα configs
@@ -176,21 +203,19 @@ class HomeController extends Controller
       // οι ώρες του προγράμματος
       $totalHours = $program->get_num_of_hours();
       // η ζώνη ώρας
-      $timeZone = Config::getConfigValueOf('timeZone');
+      $timeZone = $settings['timeZone'];
       // βρίσκω την ενεργή ώρα για πέρασμα απουσιών
       $activeHour = $program->get_active_hour(Carbon::Now($timeZone)->format("Hi"));
       // αν είναι ΣΚ 
       $isWeekend = Carbon::createFromFormat("!Ymd", $date)->isWeekend();
       // επιτρέπεται η καταχώριση το ΣΚ
-      $allowWeekends = Config::getConfigValueOf('allowWeekends');
+      $allowWeekends = $settings['allowWeekends'];
       // αν θέλουμε τις ώρες ξεκλείδωτες ή είμαστε Διαχειριστής
-      // αρχικοποίηση μεταβλητής
-      $hoursUnlocked = 0;
-      if(Config::getConfigValueOf('hoursUnlocked') || Auth::user()->role_description() == "Διαχειριστής") $hoursUnlocked = 1;
+      if($settings['hoursUnlocked'] || $isAdmin ) $hoursUnlocked = 1;
       // επιτρέπεται στους να ξεκλειδώσουν τις ώρες;
-      $letTeachersUnlockHours = Config::getConfigValueOf('letTeachersUnlockHours');
+      $letTeachersUnlockHours = $settings['letTeachersUnlockHours'];
       // να φαίνονται ή όχι οι επόμενες ώρες
-      $showFutureHours = Config::getConfigValueOf('showFutureHours');
+      $showFutureHours = $settings['showFutureHours'];
       // παίρνω την ημέρα και αλλάζω το format της ημνιας από εεεεμμηη σε ηη/μμ/εε
       $date = Carbon::createFromFormat("!Ymd", $date)->format("d/m/y");
       // αν έχει οριστεί συγκεκριμμένη ημέρα
@@ -198,7 +223,7 @@ class HomeController extends Controller
       if($setCustomDate){
         $hoursUnlocked = 1;
       }
-      $allowTeachersSaveAtNotActiveHour = Config::getConfigValueOf('allowTeachersSaveAtNotActiveHour');
+      $allowTeachersSaveAtNotActiveHour = $settings['allowTeachersSaveAtNotActiveHour'];
 
       return view('home' ,compact( 'date', 'anatheseis', 'selectedTmima', 'totalHours', 'activeHour', 'hoursUnlocked', 'letTeachersUnlockHours', 'showFutureHours', 'arrStudents', 'taxeis', 'sumApousies', 'setCustomDate', 'allowTeachersSaveAtNotActiveHour', 'isWeekend', 'allowWeekends'));
     }
