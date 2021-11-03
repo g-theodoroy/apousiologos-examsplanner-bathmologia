@@ -91,6 +91,13 @@
                                     <p id='tmimataError' class="help is-danger"></p>
                                 </div>
                             </div>
+
+                            <div class="field">
+                                <label class="checkbox" >
+                                    Διαχειριστής&nbsp;
+                                    <input id="role" name="role" type="checkbox" />
+                             </label>
+                            </div>
                         </fieldset>
                     </form>
 
@@ -154,6 +161,7 @@
                 $('#email').val(data.email);
                 $('#tmimata').val(data.tmimata);
                 $('#mathimata').val(data.mathimata);
+                if(data.role) $('#role').prop('checked', true);
             })
         })
 
@@ -182,7 +190,7 @@
             $('#modalTitle').html("Εγγραφή καθηγητή");
         })
         $('body').on('click', '#closeModalTeacher', function() {
-            $('#teachersForm').trigger("reset")
+            clearTeachersForm()
             $('.help').html("")
             $('#ajaxModel').removeClass("is-active");
         })
@@ -220,7 +228,7 @@
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {
-                    $('#teachersForm').trigger("reset")
+                    clearTeachersForm()
                     $('.help').html("")
                     $('#ajaxModel').removeClass("is-active")
                     table.ajax.reload()
@@ -233,10 +241,20 @@
         })
 
         $('body').on('click', '#formReset', function() {
-            $('#teachersForm').trigger("reset")
+            clearTeachersForm()
             $('.help').html("")
             $('#ajaxModel').removeClass("is-active")
         })
+
+        function clearTeachersForm(){
+            $('#id').val('');
+            $('#name').val('');
+            $('#email').val('');
+            $('#password').val('');
+            $('#tmimata').val('');
+            $('#mathimata').val('');
+            $('#role').prop('checked', false);
+        }
 
     </script>
 

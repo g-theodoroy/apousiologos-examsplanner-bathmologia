@@ -25,7 +25,11 @@ class TeachersController extends Controller
 
   public function getTeachers()
   {
-    $kathigites = User::whereRoleId(Role::whereRole('Καθηγητής')->first()->id)->orderby('name')->with('anatheseis')->get()->toArray();
+    // βρίσκω το id του πρώτου Διαχειριστή (συνήθως 1)
+    $firstUserId = User::first()->id;
+
+    // παίρνω τους καθηγητές
+    $kathigites = User::orderby('name')->with('anatheseis')->get()->toArray();
 
     $arrKathigites = array();
     foreach ($kathigites as $kath) {
@@ -41,7 +45,7 @@ class TeachersController extends Controller
 
       $arrKathigites[] = [
         'id' => $kath['id'],
-        'name' => $kath['name'],
+        'name' => $kath['role_id'] == 1 ? "&#x26A1; " . $kath['name']  :  $kath['name'],
         'email' => $kath['email'],
         'tmimata' => $anatheseis,
       ];
@@ -49,36 +53,48 @@ class TeachersController extends Controller
 
     return DataTables::of($arrKathigites)
       ->addIndexColumn()
-      ->addColumn('action', function ($row) {
+      ->addColumn('action', function ($row) use($firstUserId) {
         $btn = '<a href="javascript:void(0)" class="button is-small edit" id="' . $row['id'] . '">
                       <span class="icon">
                         <i class="fa fa-pencil"></i>
                         </span>
-                    </a>
-                    &nbsp;
+                    </a>';
+        if($row['id'] !== $firstUserId){
+          $btn.= '&nbsp;
                     <a href="javascript:void(0)" class="button is-small del" id="' . $row['id'] . '">
                       <span class="icon">
                         <i class="fa fa-trash"></i>
                       </span>
                     </a>';
+        }
         return $btn;
       })
       ->rawColumns(['action'])
+      ->escapeColumns([])
       ->make(true);
   }
 
   public function store(Request $request)
   {
-    if (!$request->id) {
+    //πάιρνω το role_id
+    // 1 = Διαχειριστής, 2 = Καθηγητής 
+    $role = $request->role  ? 1 : 2;
+
+    if ( $request->id === null ) {
+      // δημιουργία
       $user = User::updateOrCreate(['email' => trim($request->email)], [
         'name' => trim($request->name),
         'password' => Hash::make(trim($request->password)),
-        'role_id' => 2,
+        'role_id' => $role,
       ]);
     } else {
+      // δεν αφήνω τον πρώτο χρήστη που γράφτηκε ως Διαχειριστής να πάψει να είναι
+      if($request->id == User::first()->id) $role = 1;
+      // ενημέρωση
       $user = User::find($request->id);
       $user->name = trim($request->name);
       $user->email = trim($request->email);
+      $user->role_id = $role;
       if ($request->password) $user->password = Hash::make(trim($request->password));
       $user->save();
     }
@@ -120,6 +136,7 @@ class TeachersController extends Controller
         'name' => $kath['name'],
         'email' => $kath['email'],
         'tmimata' => join("\n", $anatheseis),
+        'role' => $kath['role_id'] == 1 ? true : false,
       ];
       return response()->json($arrKathigites[0]);
     }
