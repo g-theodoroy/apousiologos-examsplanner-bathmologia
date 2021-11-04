@@ -104,7 +104,7 @@
                   <p>Ηλεκτρονικός Απουσιολόγος &
                   <br>Προγραμματιστής Διαγωνισμάτων &
                   <br>Καταχώριση Βαθμολογίας
-                  <br>{{App\Config::getConfigValueOf('schoolName')}}</p>
+                  <br>{{ $schoolName }}</p>
                   <p class="versioninfo">GΘ @ Laravel</p>
                 </div>
             </div>

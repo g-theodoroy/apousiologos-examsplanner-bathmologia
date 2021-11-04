@@ -38,6 +38,7 @@ Route::get('/about', function () {
 
 Route::get('/home/{selectedTmima?}/{date?}', 'HomeController@index')->name('home');
 Route::post('/home/{selectedTmima?}/{date?}', 'HomeController@index')->name('save');
+Route::get('/updated', fn() => unlink(storage_path('app/.updateCheck')))->name('updated');
 Route::get('/admin', 'AdminController@index')->name('admin');
 Route::get('/export', 'AdminController@export')->name('export');
 

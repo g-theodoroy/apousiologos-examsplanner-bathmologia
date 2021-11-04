@@ -33,7 +33,7 @@
 
                 <div class="navbar-menu" id="navMenu">
                     <div class="navbar-start"></div>
-                    <span class="navbar-item ">{{ App\Config::getConfigValueOf('schoolName') }}</span>
+                    <span class="navbar-item ">{{ $schoolName }}</span>
                     <div class="navbar-end">
                         @if (Auth::guest())
                             <a class="navbar-item " href="{{ route('about') }}">Περί...</a>
@@ -112,8 +112,51 @@
     @yield('content')
     </div>
 
+    <div id="updateModal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p id="modalTitle" class="modal-card-title">Έλεγχος Ενημερώσεων</p>
+                <button id="closeupdateModal" class="delete" aria-label="close" onclick="$('#updateModal').removeClass('is-active')"></button>
+            </header>
+            <section class="modal-card-body">
+                <p>&nbsp;</p>
+                <p><span id="msgUpdateModal"></span></p>
+                <p>&nbsp;</p>
+
+                <!-- Content ... -->
+
+            </section>
+            <footer class="modal-card-foot">
+                <button id="updateNo" class="button" onclick="$('#updateModal').removeClass('is-active')">Εντάξει</button>
+                <button id="updateOk" class="button" delId="" caller="" onclick="dismissUpdate()">Ενημερώθηκε</button>
+            </footer>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
+    <script>
+        @if(Session::has('notification'))
+        $('#msgUpdateModal').html("{!! Session::get('notification.message') !!}" )
+        $('#updateModal').addClass('is-active')
+        @endif
+
+        function dismissUpdate(){
+            $.ajax({
+                url: "{{ route('updated') }}",
+                type: "GET",
+                success: function(data) {
+                    $('#updateModal').removeClass('is-active')
+                },
+                error: function(data) {
+                    console.log('Error:', data)
+                    $('#msgUpdateModal').html(data.responseJSON.message )
+                }
+            })
+        }
+
+    </script>
 </body>
 
 </html>

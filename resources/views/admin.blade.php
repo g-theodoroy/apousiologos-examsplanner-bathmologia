@@ -31,7 +31,7 @@
                   </tr>
                   <tr>
                     <td>Όνομα σχολείου</td>
-                    <td class="has-text-centered"><input name="schoolName" class="input has-text-centered" type="text" value="{{App\Config::getConfigValueOf('schoolName')}}"></td>
+                    <td class="has-text-centered"><input name="schoolName" class="input has-text-centered" type="text" value="{{ $schoolName }}"></td>
                   </tr>
                   <tr>
                     <td>Ζώνη ώρας</td>
@@ -93,7 +93,7 @@
                       <select name="activeGradePeriod">
                         <option value="0"> --- </option>
                         @foreach (\App\Period::all() as $period)
-                          <option value="{{ $period->id}}" @if($period->id == App\Config::getConfigValueOf('activeGradePeriod')) selected @endif>{{ $period->period}}</option>
+                          <option value="{{ $period->id}}" @if($period->id == $activeGradePeriod) selected @endif>{{ $period->period}}</option>
                         @endforeach
                       </select>
                       </div>
@@ -117,7 +117,7 @@
                   </tr>
                   <tr>
                   <td class="has-text-centered" colspan="2">
-                    <button class="button" type="submit">
+                    <button class="button is-link" type="submit">
                       <span class="icon">
                         <i class="fa fa-trash"></i>
                       </span>
@@ -423,11 +423,11 @@
                     <div class="card-content">
                         <nav class="level">
 
-                        @if( \App\Config::getConfigValueOf('activeGradePeriod'))
+                        @if($activeGradePeriod)
 
                             <div class="level-item">
                                 <p class="card-header-title">
-                                    {{\App\Period::find(\App\Config::getConfigValueOf('activeGradePeriod'))->period}}
+                                    {{\App\Period::find($activeGradePeriod)->period}}
                                 </p>
                             </div>
                                         
