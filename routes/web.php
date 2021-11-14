@@ -38,7 +38,7 @@ Route::get('/about', function () {
 
 Route::get('/home/{selectedTmima?}/{date?}', 'HomeController@index')->name('home');
 Route::post('/home/{selectedTmima?}/{date?}', 'HomeController@index')->name('save');
-Route::get('/updated', fn() => unlink(storage_path('app/.updateCheck')))->name('updated');
+Route::get('/updated', fn () => unlink(storage_path('app/.updateCheck')))->name('updated');
 Route::get('/admin', 'AdminController@index')->name('admin');
 Route::get('/export', 'AdminController@export')->name('export');
 
@@ -64,6 +64,7 @@ Route::get('/students', 'StudentsController@index')->name('students');
 Route::get('/students/getStudents', 'StudentsController@getStudents')->name('students.getStudents');
 Route::post('/students', 'StudentsController@store')->name('students.store');
 Route::get('/students/edit/{am?}', 'StudentsController@edit')->name('students.edit');
+Route::get('/students/unique/{am?}', 'StudentsController@studentUniqueId')->name('students.unique');
 Route::delete('/students/delete/{am?}', 'StudentsController@delete')->name('students.delete');
 Route::get('/students/apousies/{am?}', 'StudentsController@apousies')->name('students.apousies');
 Route::get('/apousies/edit/{id?}', 'StudentsController@apousiesEdit')->name('apousies.edit');
@@ -74,6 +75,7 @@ Route::get('/teachers', 'TeachersController@index')->name('teachers');
 Route::get('/teachers/getTeachers', 'TeachersController@getTeachers')->name('teachers.getTeachers');
 Route::post('/teachers', 'TeachersController@store')->name('teachers.store');
 Route::get('/teachers/edit/{id?}', 'TeachersController@edit')->name('teachers.edit');
+Route::get('/teachers/unique/{email?}', 'TeachersController@uniqueEmail')->name('teachers.uniqueEmail');
 Route::delete('/teachers/delete/{id?}', 'TeachersController@delete')->name('teachers.delete');
 
 Route::get('/planner', 'PlannerController@index')->name('planner');

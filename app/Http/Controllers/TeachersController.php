@@ -40,7 +40,7 @@ class TeachersController extends Controller
 
       $anatheseis = array();
       foreach ($kath['anatheseis'] as $anath) {
-        $anatheseis[] = $anath['tmima'] . " -> " . $anath['mathima'] ;
+        $anatheseis[] = $anath['tmima'] . " -> " . $anath['mathima'];
       }
 
       $arrKathigites[] = [
@@ -53,14 +53,14 @@ class TeachersController extends Controller
 
     return DataTables::of($arrKathigites)
       ->addIndexColumn()
-      ->addColumn('action', function ($row) use($firstUserId) {
+      ->addColumn('action', function ($row) use ($firstUserId) {
         $btn = '<a href="javascript:void(0)" class="button is-small edit" id="' . $row['id'] . '">
                       <span class="icon">
                         <i class="fa fa-pencil"></i>
                         </span>
                     </a>';
-        if($row['id'] !== $firstUserId){
-          $btn.= '&nbsp;
+        if ($row['id'] !== $firstUserId) {
+          $btn .= '&nbsp;
                     <a href="javascript:void(0)" class="button is-small del" id="' . $row['id'] . '">
                       <span class="icon">
                         <i class="fa fa-trash"></i>
@@ -80,7 +80,7 @@ class TeachersController extends Controller
     // 1 = Διαχειριστής, 2 = Καθηγητής 
     $role = $request->role  ? 1 : 2;
 
-    if ( $request->id === null ) {
+    if ($request->id === null) {
       // δημιουργία
       $user = User::updateOrCreate(['email' => trim($request->email)], [
         'name' => trim($request->name),
@@ -89,7 +89,7 @@ class TeachersController extends Controller
       ]);
     } else {
       // δεν αφήνω τον πρώτο χρήστη που γράφτηκε ως Διαχειριστής να πάψει να είναι
-      if($request->id == User::first()->id) $role = 1;
+      if ($request->id == User::first()->id) $role = 1;
       // ενημέρωση
       $user = User::find($request->id);
       $user->name = trim($request->name);
@@ -104,7 +104,7 @@ class TeachersController extends Controller
 
     foreach ($tmimata as $tmima) {
       if (trim($tmima)) {
-        $data = explode ("->", $tmima);
+        $data = explode("->", $tmima);
         Anathesi::updateOrCreate(['user_id' => $user->id, 'tmima' => trim($data[0]), 'mathima' => trim($data[1] ?? null)], [
           'user_id' => $user->id,
           'tmima' => trim($data[0]),
@@ -112,7 +112,7 @@ class TeachersController extends Controller
         ]);
       }
     }
-   return response()->json(['success' => 'Teacher saved successfully.']);
+    return response()->json(['success' => 'Teacher saved successfully.']);
   }
 
   public function edit($id)
@@ -123,7 +123,7 @@ class TeachersController extends Controller
     foreach ($kathigites as $kath) {
       usort($kath['anatheseis'], function ($a, $b) {
         return $a['tmima'] <=> $b['tmima'] ?:
-        strnatcasecmp($a['mathima'],  $b['mathima']);
+          strnatcasecmp($a['mathima'],  $b['mathima']);
       });
 
       $anatheseis = array();
@@ -147,5 +147,10 @@ class TeachersController extends Controller
     User::where('id', $id)->delete();
     Anathesi::where('user_id', $id)->delete();
     return response()->json(['success' => 'Teacher deleted successfully.']);
+  }
+
+  public function uniqueEmail($email)
+  {
+    return User::where('email', $email)->first() ? 1 : 0;
   }
 }

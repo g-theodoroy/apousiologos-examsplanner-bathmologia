@@ -161,6 +161,18 @@
           </p>
           @endif
         </header>
+          @if(Session::get('usersFailures') && count(Session::get('usersFailures')) > 0 )
+            <header class="card-header">
+              <p class="card-header-title  has-text-danger">Λάθη: {{count(Session::get('usersFailures'))}}</p>
+              <p class="card-header-title has-text-danger">
+                @foreach (Session::get('usersFailures') as $failure)
+                  {{ $loop->index +1 }}<br>
+                  γραμμή: {{ $failure->row() }} -> {{ $failure->errors()[0] }}<br>
+                  Δεδομένα: "{{ implode( ', ' ,$failure->values()) }}"<br>
+                @endforeach 
+              </p>
+            </header>
+          @endif
         <form name="formKath" id="formKath" role="form" method="POST" action="{{ url('/insertusers') }}" enctype="multipart/form-data">
           {{ csrf_field() }}
           <div class="card-content">
@@ -230,6 +242,18 @@
           </p>
           @endif
         </header>
+          @if(Session::get('studentsFailures') && count(Session::get('studentsFailures')) > 0)
+            <header class="card-header">
+              <p class="card-header-title  has-text-danger">Λάθη: {{count(Session::get('studentsFailures'))}}</p>
+              <p class="card-header-title has-text-danger">
+                @foreach (Session::get('studentsFailures') as $failure)
+                  {{ $loop->index +1 }}<br>
+                  γραμμή: {{ $failure->row() }} -> {{ $failure->errors()[0] }}<br>
+                  Δεδομένα: "{{ implode( ', ' ,$failure->values()) }}"<br>
+                @endforeach 
+              </p>
+            </header>
+          @endif
 
         <form name="formMath" id="formMath" role="form" method="POST" action="{{ url('/insertstudents') }}" enctype="multipart/form-data">
           {{ csrf_field() }}
@@ -298,6 +322,18 @@
           </p>
           @endif
         </header>
+          @if(Session::get('programFailures') && count(Session::get('programFailures')) > 0)
+            <header class="card-header">
+              <p class="card-header-title  has-text-danger">Λάθη: {{count(Session::get('programFailures'))}}</p>
+              <p class="card-header-title has-text-danger">
+                @foreach (Session::get('programFailures') as $failure)
+                  {{ $loop->index +1 }}<br>
+                  γραμμή: {{ $failure->row() }} -> {{ $failure->errors()[0] }}<br>
+                  Δεδομένα: "{{ implode( ', ' ,$failure->values()) }}"<br>
+                @endforeach 
+              </p>
+            </header>
+          @endif
 
         <form name="formProg" id="formProg" role="form" method="POST" action="{{ url('/insertprogram') }}" enctype="multipart/form-data">
           {{ csrf_field() }}

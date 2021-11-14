@@ -118,6 +118,7 @@
     <script src="{{ asset('js/dataTables.bulma.min.js') }}"></script>
 
     <script type="text/javascript">
+        var email = null
         var table = $('.yajra-datatable').DataTable({
             "language": {
                 "url": "{{ asset('js/Greek.lang.json') }}"
@@ -162,13 +163,14 @@
                 $('#tmimata').val(data.tmimata);
                 $('#mathimata').val(data.mathimata);
                 if(data.role) $('#role').prop('checked', true);
+                email = data.email
             })
         })
 
         $('body').on('click', '.del', function() {
 
             var id = this.id
-            if (!confirm("Θέλετε σίγουρα να διαγράψετε τον καθηγητή;")) return
+            if (!confirm("Θέλετε σίγουρα να διαγράψετε τον καθηγητή;")) return false
             $.ajax({
                 type: "DELETE",
                 url: "{{ route('teachers.delete') }}" + '/' + id,
@@ -201,7 +203,7 @@
                 $('#nameError').html("Συμπληρώστε το Ονοματεπώνυμο")
                 $('#name').focus()
                 $('#name').val('')
-                return
+                return false
             } else {
                 $('#nameError').html("")
             }
@@ -209,34 +211,47 @@
                 $('#emailError').html("Συμπληρώστε το Email")
                 $('#email').focus()
                 $('#email').val('')
-                return
+                return false
             } else {
-                $('#emailError').html("")
+                if(! ValidateEmail($.trim($('#email').val()))){
+                    $('#emailError').html("Μη έγκυρο Email")
+                    $('#email').focus()
+                    return false
+                }else{
+                    $('#emailError').html("")
+                }
             }
             if (!$.trim($('#id').val()) && !$.trim($('#password').val())) {
                 $('#passwordError').html("Συμπληρώστε το Password")
                 $('#password').focus()
                 $('#password').val('')
-                return
+                return false
             } else {
-                $('#emailError').html("")
+                $('#passwordError').html("")
             }
 
-            $.ajax({
-                data: $('#teachersForm').serialize(),
-                url: "{{ route('teachers.store') }}",
-                type: "POST",
-                dataType: 'json',
-                success: function(data) {
-                    clearTeachersForm()
-                    $('.help').html("")
-                    $('#ajaxModel').removeClass("is-active")
-                    table.ajax.reload()
-                },
-                error: function(data) {
-                    console.log('Error:', data)
-                    $('#showError').html(data.responseJSON.message)
+            $.get("{{ route('teachers.uniqueEmail') }}" + "/" + $.trim($('#email').val()), function(data) {
+                if(data == 1 && $.trim($('#email').val()) !== email){
+		        $('#emailError').html("Το Email είναι ήδη καταχωρισμένο")
+		        $('#email').focus()
+		        return false
                 }
+                $.ajax({
+                    data: $('#teachersForm').serialize(),
+                    url: "{{ route('teachers.store') }}",
+                    type: "POST",
+                    dataType: 'json',
+                    success: function(data) {
+                        clearTeachersForm()
+                        $('.help').html("")
+                        $('#ajaxModel').removeClass("is-active")
+                        table.ajax.reload()
+                    },
+                    error: function(data) {
+                        console.log('Error:', data)
+                        $('#showError').html(data.responseJSON.message)
+                    }
+                })
             })
         })
 
@@ -254,6 +269,12 @@
             $('#tmimata').val('');
             $('#mathimata').val('');
             $('#role').prop('checked', false);
+            email = null
+        }
+
+        function ValidateEmail(mail){
+            if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) return true
+            return false
         }
 
     </script>

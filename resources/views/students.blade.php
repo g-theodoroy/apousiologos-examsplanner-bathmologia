@@ -221,6 +221,7 @@
     <script src="{{ asset('js/dataTables.bulma.min.js') }}"></script>
 
     <script type="text/javascript">
+        var amForEdit = null
         var subtable = new Array()
         var table = $('.yajra-datatable').DataTable({
             "language": {
@@ -282,6 +283,7 @@
         $('body').on('click', '.edit', function() {
             var am = this.id
             $.get("{{ route('students.edit') }}" + "/" + am, function(data) {
+                amForEdit = am
                 $('#ajaxModel').addClass("is-active");
                 $('#modalTitle').html("Επεξεργασία μαθητή");
                 $('#am').val(data.id);
@@ -298,7 +300,7 @@
 
         $('body').on('click', '.del', function() {
             var am = this.id
-            if (!confirm("Θέλετε σίγουρα να διαγράψετε τον μαθητή;")) return
+            if (!confirm("Θέλετε σίγουρα να διαγράψετε τον μαθητή;")) return  false
             $.ajax({
                 type: "DELETE",
                 url: "{{ route('students.delete') }}" + '/' + am,
@@ -323,6 +325,7 @@
             $('.help').html("")
             $('#ajaxModel').removeClass("is-active");
             $('#modalTitle').html("Εγγραφή μαθητή");
+            amForEdit = null
         })
 
         $('body').on('click', '#formSubmit', function() {
@@ -331,15 +334,23 @@
                 $('#amError').html("Συμπληρώστε τον Αρ. Μητρώου")
                 $('#am').focus()
                 $('#am').val('')
-                return
+                return false
             } else {
-                $('#amError').html("")
+                var amForCheck = $.trim($('#am').val())
+                if( !(parseInt( amForCheck ) == amForCheck && amForCheck > 0)){
+                    $('#amError').html("O Αρ. Μητρώου πρέπει να είναι θετικός αριθμός")
+                    $('#am').focus()
+                    $('#am').val(amForCheck)
+                    return false
+                }else{
+                    $('#amError').html("")
+                }
             }
             if (!$.trim($('#eponimo').val())) {
                 $('#eponimoError').html("Συμπληρώστε το Επώνυμο")
                 $('#eponimo').focus()
                 $('#eponimo').val('')
-                return
+                return false
             } else {
                 $('#eponimoError').html("")
             }
@@ -347,7 +358,7 @@
                 $('#onomaError').html("Συμπληρώστε το Όνομα")
                 $('#onoma').focus()
                 $('#onoma').val('')
-                return
+                return false
             } else {
                 $('#onomaError').html("")
             }
@@ -355,27 +366,35 @@
                 $('#patronimoError').html("Συμπληρώστε το Πατρώνυμο")
                 $('#patronimo').focus()
                 $('#patronimo').val('')
-                return
+                return false
             } else {
                 $('#patronimoError').html("")
             }
 
-
-            $.ajax({
-                data: $('#studentsForm').serialize(),
-                url: "{{ route('students.store') }}",
-                type: "POST",
-                dataType: 'json',
-                success: function(data) {
-                    $('#studentsForm').trigger("reset")
-                    $('.help').html("")
-                    $('#ajaxModel').removeClass("is-active")
-                    table.ajax.reload()
-                },
-                error: function(data) {
-                    console.log('Error:', data)
-                    $('#showError').html(data.responseJSON.message)
+            $.get("{{ route('students.unique') }}" + "/" + amForCheck, function(data) {
+                if(data == 1 && amForCheck !== amForEdit){
+                    $('#amError').html("O Αρ. Μητρώου είναι ήδη καταχωρισμένος")
+                    $('#am').focus()
+                    $('#am').val(amForCheck)
+                    return false
                 }
+                $.ajax({
+                    data: $('#studentsForm').serialize(),
+                    url: "{{ route('students.store') }}",
+                    type: "POST",
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#studentsForm').trigger("reset")
+                        $('.help').html("")
+                        $('#ajaxModel').removeClass("is-active")
+                        amForEdit = null
+                        table.ajax.reload()
+                    },
+                    error: function(data) {
+                        console.log('Error:', data)
+                        $('#showError').html(data.responseJSON.message)
+                    }
+                })
             })
         })
 
@@ -383,6 +402,7 @@
             $('#studentsForm').trigger("reset")
             $('.help').html("")
             $('#ajaxModel').removeClass("is-active")
+            amForEdit = null
         })
 
         $('.yajra-datatable tbody').on('click', 'td.details-control', function() {
@@ -525,7 +545,7 @@
 
         $('body').on('click', '.apoudel', function() {
             var id = this.id
-            if (!confirm("Θέλετε σίγουρα να τις απουσίες;")) return
+            if (!confirm("Θέλετε σίγουρα να διαγράψετε τις απουσίες;")) return false
             $.ajax({
                 type: "DELETE",
                 url: "{{ route('apousies.delete') }}" + '/' + id,
@@ -561,14 +581,14 @@
                 $('#dateError').html("Συμπληρώστε την Ημερομηνία")
                 $('#date').focus()
                 $('#date').val('')
-                return
+                return false
             } else {
                 $('#dateError').html("")
             }
             if (!isDDMMYY($('#date').val())) {
                 $('#dateError').html("Χρησιμοποιείστε τη μορφή ηη/μμ/εε")
                 $('#date').focus()
-                return
+                return false
             } else {
                 $('#dateError').html("")
             }
