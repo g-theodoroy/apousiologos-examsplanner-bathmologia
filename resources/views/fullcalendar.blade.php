@@ -19,6 +19,13 @@
                                 <span class="icon"><i class="fa fa-calendar"></i></span>
                             </p>
                             <p class="response card-header-title "></p>
+                            @if(Auth::user()->role->role == 'Διαχειριστής')
+                                <a class="button" href="javascript:void(0)" id="print">
+                                    <span class="icon"><i class="fa fa-download"></i></span>
+                                    <span>Εξαγωγή</span>
+                                </a>
+                                &nbsp;
+                            @endif
                             <a class="button" href="javascript:void(0)" id="myEvents">
                                 <span class="icon"><i class="fa fa-book"></i></span>
                                 <span>Τα διαγωνίσματά μου</span>
@@ -407,6 +414,12 @@
                     }
                 });
             }
+
+            $('body').on('click', '#print', function() {
+                curStart = calendar.view.activeStart.getFullYear() + '-' + String('0' + (calendar.view.activeStart.getMonth()+1)).slice(-2) + '-' + String('0' + (calendar.view.activeStart.getDate())).slice(-2)
+                curEnd = calendar.view.activeEnd.getFullYear() + '-' + String('0' + (calendar.view.activeEnd.getMonth()+1)).slice(-2) + '-' + String('0' + (calendar.view.activeEnd.getDate())).slice(-2)
+                window.location.href = SITEURL + '/calendar/export?start=' + curStart + '&end=' + curEnd 
+            })
 
             $('body').on('click', '#myEvents', function() {
                 $.ajax({

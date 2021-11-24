@@ -80,9 +80,10 @@ Route::delete('/teachers/delete/{id?}', 'TeachersController@delete')->name('teac
 
 Route::get('/planner', 'PlannerController@index')->name('planner');
 
-//fullcalender
+//fullcalendar
 Route::get('/calendar', 'FullCalendarController@index')->name('calendar');
 Route::get('/calendar/data', 'FullCalendarController@data');
+Route::get('/calendar/export', 'FullCalendarController@export')->middleware('admin');
 Route::get('/calendar/events', 'FullCalendarController@events')->name('events');;
 Route::post('/calendar/tmimata', 'FullCalendarController@tmimata')->name('tmimata');
 Route::post('/fullcalendar/create', 'FullCalendarController@create')->name('calendar.create');

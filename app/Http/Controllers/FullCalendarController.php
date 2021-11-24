@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\User;
 use Response;
 use App\Event;
-use App\Anathesi;
-use App\Config;
-use App\User;
 use App\Tmima;
-use Illuminate\Support\Facades\Auth;
+use App\Config;
+use App\Anathesi;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Exports\CalendarExport;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 // use Illuminate\Support\Facades\Log;
 
 
@@ -38,7 +40,7 @@ class FullCalendarController extends Controller
 
         $start = !empty($_GET["start"]) ? substr($_GET["start"], 0, 10) : '';
         $end = !empty($_GET["end"]) ? substr($_GET["end"], 0, 10) : '';
-        $data = Event::where('start', '>=', $start)->where('end',   '<=', $end)->orderBy('title')->get();
+        $data = Event::where('start', '>=', $start)->where('end',   '<=', $end)->orderBy('start')->orderBy('title')->get();
         foreach ($data as $d) {
             $id = Auth::user()->id;
             if ($d->user_id == "$id" || $isAdmin) {
@@ -48,7 +50,17 @@ class FullCalendarController extends Controller
         return Response::json($data);
     }
 
-    public function mathimata(){
+
+    public function export()
+    {
+        $startLabel = request()->start ?? 'την_αρχή';
+        $endLabel = request()->end ?? 'το_τέλος';
+        return Excel::download(new CalendarExport(request()->start, request()->end), 'Διαγωνίσματα_από_' . $startLabel . '_έως_' . $endLabel . '.xls');
+    }
+
+
+    public function mathimata()
+    {
         $isAdmin = Auth::user()->role->role == 'Διαχειριστής';
 
         $mathimata = Anathesi::select('mathima');
@@ -117,7 +129,7 @@ class FullCalendarController extends Controller
             'tmima1' => $request->tmima1,
             'tmima2' => $request->tmima2,
             'mathima' => $request->mathima
-       ], [
+        ], [
             'title' => $title,
             'start' => $request->start,
             'end' => $request->end,
