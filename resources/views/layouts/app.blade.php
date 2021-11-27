@@ -42,9 +42,7 @@
                                 <a class="navbar-item " href="{{ route('register') }}">Εγγραφή</a>
                             @endif
                         @else
-
-                            @if (Auth::user()->role->role == 'Διαχειριστής')
-
+                            @admin
                                 <div class="navbar-item has-dropdown is-hoverable">
                                     <a class="navbar-link" href="#">Διαχειριστής</a>
 
@@ -65,7 +63,7 @@
                                             href="{{ request()->is('admin') ? '#' : route('admin') }}">
                                             Ρυθμίσεις
                                         </a>
-                            @endif
+                            @endadmin
                     </div>
                 </div>
 

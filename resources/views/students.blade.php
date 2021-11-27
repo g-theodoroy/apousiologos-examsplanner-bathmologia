@@ -138,6 +138,10 @@
                                 <div class="control">
                                     <input id="t5" name="tmima[]" type="text" placeholder="Τμήμα" class="input">
                                 </div>
+
+                                <div class="control">
+                                    <input id="t6" name="tmima[]" type="text" placeholder="Τμήμα" class="input">
+                                </div>
                             </div>
 
                         </fieldset>
@@ -295,6 +299,7 @@
                 $('#t3').val(data.t3);
                 $('#t4').val(data.t4);
                 $('#t5').val(data.t5);
+                $('#t6').val(data.t6);
             })
         })
 

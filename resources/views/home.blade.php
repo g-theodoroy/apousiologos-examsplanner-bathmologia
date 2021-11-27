@@ -27,11 +27,11 @@
                                                 <a
                                                     href="{{ url('/home', $anathesi) }}/{{ !$isAdmin && $setCustomDate ? Carbon\Carbon::createFromFormat('!d/m/y', $setCustomDate)->format('Ymd') : Carbon\Carbon::createFromFormat('!d/m/y', $date)->format('Ymd') }}">{{ $anathesi }}</a>&nbsp;
                                             @endforeach
-                                            @if ($isAdmin)
+                                            @admin
                                                 <a
                                                     href="{{ url('/home/0') }}/{{ Carbon\Carbon::createFromFormat('!d/m/y', $date)->format('Ymd') }}"><span
                                                         class="icon"><i class="fa fa-times"></i></span></a>&nbsp;
-                                            @endif
+                                            @endadmin
                                         </p>
                                     </div>
                                 </header>
@@ -68,13 +68,13 @@
                                                                     class="fa fa-angle-right"></i></span>
                                                         </a>
                                                     </p>
-                                                    @if($isAdmin)
+                                                    @admin
                                                         <p class="control">
                                                             <a class="button" href="javascript:exportXls()">
                                                                 <span class="icon" title="Εξαγωγή xls"><i class="fa fa-download"></i></span>
                                                             </a>
                                                         </p>
-                                                    @endif
+                                                    @endadmin
                                                     <p class="control">
                                                         <a id="changeDate" class="button" href="{{ url('/home', $selectedTmima) }}"
                                                             onclick="return changeDate(this)"><span class="icon" title="Βρες την ημέρα"><i
@@ -273,9 +273,9 @@
                                             <div class="level has-text-centered ">
                                                 <p class="card-header-title level-item">
                                                     {{ $selectedTmima ? $selectedTmima : 'Όλα τα τμήματα' }}
-                                                    @if ($isAdmin)
+                                                    @admin
                                                         <br>{{ $date }}
-                                                    @endif
+                                                    @endadmin
                                                 </p>
                                                 @if ((!$isAdmin && !$activeHour && !$hoursUnlocked) || ! App\Anathesi::countMathimata())
                                                     <p class="card-header-title level-item">
@@ -305,7 +305,7 @@
                                         @else
                                             <p class="title">
                                                 <br>
-                                                @if ($isAdmin)
+                                                @admin
                                                     @if (!App\User::get_num_of_kathigites())
                                                         <a href="{{ route('admin') }}">Πρέπει να εισάγετε καθηγητές</a><br>
                                                         <br>
@@ -329,7 +329,7 @@
                                                     @else
                                                         Επιλέξτε ένα τμήμα
                                                     @endif
-                                                @endif
+                                                @endadmin
                                             </p>
                                             @endif
                                         </div>

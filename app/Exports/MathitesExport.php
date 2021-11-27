@@ -17,8 +17,8 @@ class MathitesExport implements FromCollection, WithHeadings, ShouldAutoSize, Wi
   {
     return [
       AfterSheet::class    => function (AfterSheet $event) {
-        $event->sheet->getDelegate()->getStyle('A1:I1')->getFont()->setSize(12)->setBold(true);
-        $event->sheet->getDelegate()->getStyle('A1:I1')->getFill()->setFillType('solid')->getStartColor()->setARGB('FFE0E0E0');
+        $event->sheet->getDelegate()->getStyle('A1:j1')->getFont()->setSize(12)->setBold(true);
+        $event->sheet->getDelegate()->getStyle('A1:j1')->getFill()->setFillType('solid')->getStartColor()->setARGB('FFE0E0E0');
         $event->sheet->getDefaultRowDimension()->setRowHeight(20);
       },
     ];
@@ -31,11 +31,12 @@ class MathitesExport implements FromCollection, WithHeadings, ShouldAutoSize, Wi
       'Επώνυμο μαθητή',
       'Όνομα μαθητή',
       'Όνομα πατέρα',
-      'Τμήματα',
-      'Τμήματα',
-      'Τμήματα',
-      'Τμήματα',
-      'Τμήματα'
+      'Τμήμα',
+      'Τμήμα',
+      'Τμήμα',
+      'Τμήμα',
+      'Τμήμα',
+      'Τμήμα'
     ];
   }
 
@@ -67,14 +68,15 @@ class MathitesExport implements FromCollection, WithHeadings, ShouldAutoSize, Wi
         't2' => isset($stu['tmimata'][1]) ? $stu['tmimata'][1] : "",
         't3' => isset($stu['tmimata'][2]) ? $stu['tmimata'][2] : "",
         't4' => isset($stu['tmimata'][3]) ? $stu['tmimata'][3] : "",
-        't5' => isset($stu['tmimata'][4]) ? $stu['tmimata'][4] : ""
+        't5' => isset($stu['tmimata'][4]) ? $stu['tmimata'][4] : "",
+        't6' => isset($stu['tmimata'][5]) ? $stu['tmimata'][5] : ""
       ];
     }
 
 
     if (!$newStudents) {
       $newStudents = [
-        ['100', 'Επώνυμο1', 'Όνομα1', 'Πατρώνυμο1', 'τμήμα1-1', 'τμήμα1-2', 'τμήμα1-3', 'τμήμα1-4', ''],
+        ['100', 'Επώνυμο1', 'Όνομα1', 'Πατρώνυμο1', 'τμήμα1-1', 'τμήμα1-2', 'τμήμα1-3', 'τμήμα1-4', 'τμήμα1-5', 'τμήμα1-6'],
         ['101', 'Επώνυμο2', 'Όνομα2', 'Πατρώνυμο2', 'τμήμα2-1', 'τμήμα2-2', '', '', ''],
         ['102', 'Επώνυμο3', 'Όνομα3', 'Πατρώνυμο3', 'τμήμα3-1', 'τμήμα3-2', 'τμήμα3-3', '', '']
       ];

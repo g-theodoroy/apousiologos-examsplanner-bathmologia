@@ -37,7 +37,7 @@ class StudentsImport implements OnEachRow, WithStartRow, WithValidation, SkipsOn
     ]);
 
     $n = 1;
-    while (trim($row[3 + $n])) {
+    while (isset($row[3 + $n]) && trim($row[3 + $n])) {
       self::$tmimata++;
       Tmima::updateOrCreate(['student_id' => $student->id, 'tmima' => trim($row[3 + $n])], [
         'student_id' => $student->id,

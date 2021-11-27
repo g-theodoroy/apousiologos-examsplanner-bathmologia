@@ -19,13 +19,13 @@
                                 <span class="icon"><i class="fa fa-calendar"></i></span>
                             </p>
                             <p class="response card-header-title "></p>
-                            @if(Auth::user()->role->role == 'Διαχειριστής')
+                            @admin
                                 <a class="button" href="javascript:void(0)" id="print">
                                     <span class="icon"><i class="fa fa-download"></i></span>
                                     <span>Εξαγωγή</span>
                                 </a>
                                 &nbsp;
-                            @endif
+                            @endadmin
                             <a class="button" href="javascript:void(0)" id="myEvents">
                                 <span class="icon"><i class="fa fa-book"></i></span>
                                 <span>Τα διαγωνίσματά μου</span>

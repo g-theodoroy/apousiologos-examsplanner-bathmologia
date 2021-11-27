@@ -133,7 +133,8 @@ class StudentsController extends Controller
         't2' => isset($stu['tmimata'][1]) ? $stu['tmimata'][1] : "",
         't3' => isset($stu['tmimata'][2]) ? $stu['tmimata'][2] : "",
         't4' => isset($stu['tmimata'][3]) ? $stu['tmimata'][3] : "",
-        't5' => isset($stu['tmimata'][4]) ? $stu['tmimata'][4] : ""
+        't5' => isset($stu['tmimata'][4]) ? $stu['tmimata'][4] : "",
+        't6' => isset($stu['tmimata'][5]) ? $stu['tmimata'][5] : ""
       ];
     }
     return response()->json($newStudents[0]);

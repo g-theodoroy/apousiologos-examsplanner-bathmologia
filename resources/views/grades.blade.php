@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@php($isAdmin = Auth::user()->role->role == 'Διαχειριστής')
-
     @section('content')
 
         <div class="container">
@@ -45,7 +43,7 @@
                                     <div class="columns is-centered">
                                         <div class="column is-narrow">
                                             <div class="level has-text-centered ">
-                                                @if (($selectedTmima && count($arrStudents)) || ($isAdmin && count($arrStudents)))
+                                                @if (($selectedTmima && count($arrStudents)) || (Auth::user()->role->role == 'Διαχειριστής' && count($arrStudents)))
                                                     <p class="card-header-title level-item">
                                                         {{ $selectedTmima }} -> {{ $selectedMathima}}
                                                     </p>
@@ -129,7 +127,7 @@
                                         @else
                                             <p class="title">
                                                 <br>
-                                                @if ($isAdmin)
+                                                @admin
                                                     @if (!App\User::get_num_of_kathigites())
                                                         <a href="{{ route('admin') }}">Πρέπει να εισάγετε καθηγητές</a><br>
                                                         <br>
@@ -151,7 +149,7 @@
                                                     @else
                                                         Επιλέξτε ένα τμήμα
                                                     @endif
-                                                @endif
+                                                @endadmin
                                             </p>
                                             @endif
                                         </div>
