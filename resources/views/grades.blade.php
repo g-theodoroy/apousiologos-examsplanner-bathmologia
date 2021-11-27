@@ -20,11 +20,11 @@
                                                     <a href="{{ url('grades', $anathesi->id) }}">{{ $anathesi->tmima }}</a>&nbsp;
                                                 @endif
                                             @endforeach
-                                            @if ($isAdmin)
+                                            @admin
                                                 <a
                                                     href="{{ url('grades/0') }}"><span
                                                         class="icon"><i class="fa fa-times"></i></span></a>&nbsp;
-                                            @endif
+                                            @endadmin
                                         </p>
                                     </div>
                                 </header>
