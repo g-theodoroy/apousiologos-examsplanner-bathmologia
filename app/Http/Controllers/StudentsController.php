@@ -29,12 +29,8 @@ class StudentsController extends Controller
     $program = new Program;
     // οι ώρες του προγράμματος
     $totalHours = $program->get_num_of_hours();
-    // τα περισσότερα τμήματα μαθητή
-    // $tmimataMaxCount = Tmima::tmimataMaxCount();
-    // αν είναι ζυγός ο αριθμός των τμημάτων προσθέτω ακόμη μια γραμμή
-    //$tmimataFormRows = $tmimataMaxCount % 2 == 0 ? round($tmimataMaxCount / 2) + 1 : round($tmimataMaxCount / 2);
-    $tmimataFormRows = 0;
-    return view('students', compact('totalHours', 'tmimataFormRows'));
+
+    return view('students', compact('totalHours'));
   }
 
   public function getStudents()

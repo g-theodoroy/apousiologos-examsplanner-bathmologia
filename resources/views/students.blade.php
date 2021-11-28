@@ -108,23 +108,7 @@
 
                             <!-- Text input-->
                             <div class="field"><label class="label">Τμήματα</label></div>
-                            <div id="tmimataTextboxes">
-                                @for( $i=0; $i < $tmimataFormRows; $i++)
-
-                                    <div class="field is-grouped">
-
-                                        <div class="control">
-                                            <input id="t{{ $i * 2 + 1 }}" name="tmima[]" type="text" placeholder="Τμήμα" class="input">
-                                        </div>
-
-                                        <div class="control">
-                                            <input id="t{{ $i * 2 + 2 }}" name="tmima[]" type="text" placeholder="Τμήμα" class="input">
-                                        </div>
-
-                                    </div>
-
-                                @endfor
-                            </div>
+                            <div id="tmimataTextboxes"></div>
 
                         </fieldset>
                     </form>
