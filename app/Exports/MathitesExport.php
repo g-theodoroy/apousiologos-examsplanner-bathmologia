@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Student;
 use App\Tmima;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -12,13 +13,21 @@ use Maatwebsite\Excel\Events\AfterSheet;
 
 class MathitesExport implements FromCollection, WithHeadings, ShouldAutoSize, WithEvents
 {
+  private $tmimataMaxCount = 6;
+
+  public function __construct()
+  {
+    if (Tmima::tmimataMaxCount()) $this->tmimataMaxCount = Tmima::tmimataMaxCount();
+  }
 
   public function registerEvents(): array
   {
+    $letter = range('A', 'Z')[$this->tmimataMaxCount + 3];
+
     return [
-      AfterSheet::class    => function (AfterSheet $event) {
-        $event->sheet->getDelegate()->getStyle('A1:j1')->getFont()->setSize(12)->setBold(true);
-        $event->sheet->getDelegate()->getStyle('A1:j1')->getFill()->setFillType('solid')->getStartColor()->setARGB('FFE0E0E0');
+      AfterSheet::class    => function (AfterSheet $event) use ($letter) {
+        $event->sheet->getDelegate()->getStyle('A1:' . $letter . '1')->getFont()->setSize(12)->setBold(true);
+        $event->sheet->getDelegate()->getStyle('A1:' . $letter . '1')->getFill()->setFillType('solid')->getStartColor()->setARGB('FFE0E0E0');
         $event->sheet->getDefaultRowDimension()->setRowHeight(20);
       },
     ];
@@ -26,18 +35,16 @@ class MathitesExport implements FromCollection, WithHeadings, ShouldAutoSize, Wi
 
   public function headings(): array
   {
-    return [
-      'Αριθμός μητρώου',
-      'Επώνυμο μαθητή',
-      'Όνομα μαθητή',
-      'Όνομα πατέρα',
-      'Τμήμα',
-      'Τμήμα',
-      'Τμήμα',
-      'Τμήμα',
-      'Τμήμα',
-      'Τμήμα'
-    ];
+
+    return array_merge(
+      [
+        'Αριθμός μητρώου',
+        'Επώνυμο μαθητή',
+        'Όνομα μαθητή',
+        'Όνομα πατέρα'
+      ],
+      array_fill(0, $this->tmimataMaxCount, 'Τμήμα')
+    );
   }
 
   /**
@@ -59,20 +66,22 @@ class MathitesExport implements FromCollection, WithHeadings, ShouldAutoSize, Wi
 
     $newStudents = array();
     foreach ($arrStudents as $stu) {
-      $newStudents[] = [
-        'id' => $stu['id'],
-        'eponimo' => $stu['eponimo'],
-        'onoma' => $stu['onoma'],
-        'patronimo' => $stu['patronimo'],
-        't1' => isset($stu['tmimata'][0]) ? $stu['tmimata'][0] : "",
-        't2' => isset($stu['tmimata'][1]) ? $stu['tmimata'][1] : "",
-        't3' => isset($stu['tmimata'][2]) ? $stu['tmimata'][2] : "",
-        't4' => isset($stu['tmimata'][3]) ? $stu['tmimata'][3] : "",
-        't5' => isset($stu['tmimata'][4]) ? $stu['tmimata'][4] : "",
-        't6' => isset($stu['tmimata'][5]) ? $stu['tmimata'][5] : ""
-      ];
+      $num = 1;
+      $tmimata = array();
+      foreach ($stu['tmimata'] as $tmi) {
+        $tmimata['t' . $num] =  $tmi;
+        $num++;
+      }
+      $newStudents[] = array_merge(
+        [
+          'id' => $stu['id'],
+          'eponimo' => $stu['eponimo'],
+          'onoma' => $stu['onoma'],
+          'patronimo' => $stu['patronimo']
+        ],
+        $tmimata
+      );
     }
-
 
     if (!$newStudents) {
       $newStudents = [

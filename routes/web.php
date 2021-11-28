@@ -1,9 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\User;
+use App\Tmima;
 use App\Config;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,6 +65,7 @@ Route::get('/students', 'StudentsController@index')->name('students');
 Route::get('/students/getStudents', 'StudentsController@getStudents')->name('students.getStudents');
 Route::post('/students', 'StudentsController@store')->name('students.store');
 Route::get('/students/edit/{am?}', 'StudentsController@edit')->name('students.edit');
+Route::get('/students/tmimataMaxCount',  fn () => Tmima::tmimataMaxCount() + 1)->name('students.tmimataMaxCount');
 Route::get('/students/unique/{am?}', 'StudentsController@studentUniqueId')->name('students.unique');
 Route::delete('/students/delete/{am?}', 'StudentsController@delete')->name('students.delete');
 Route::get('/students/apousies/{am?}', 'StudentsController@apousies')->name('students.apousies');

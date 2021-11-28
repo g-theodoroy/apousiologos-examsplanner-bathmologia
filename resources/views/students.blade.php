@@ -108,40 +108,22 @@
 
                             <!-- Text input-->
                             <div class="field"><label class="label">Τμήματα</label></div>
+                            <div id="tmimataTextboxes">
+                                @for( $i=0; $i < $tmimataFormRows; $i++)
 
-                            <div class="field is-grouped">
+                                    <div class="field is-grouped">
 
-                                <div class="control">
-                                    <input id="t1" name="tmima[]" type="text" placeholder="Τμήμα" class="input">
-                                </div>
+                                        <div class="control">
+                                            <input id="t{{ $i * 2 + 1 }}" name="tmima[]" type="text" placeholder="Τμήμα" class="input">
+                                        </div>
 
-                                <div class="control">
-                                    <input id="t2" name="tmima[]" type="text" placeholder="Τμήμα" class="input">
-                                </div>
+                                        <div class="control">
+                                            <input id="t{{ $i * 2 + 2 }}" name="tmima[]" type="text" placeholder="Τμήμα" class="input">
+                                        </div>
 
-                            </div>
+                                    </div>
 
-                            <div class="field is-grouped">
-
-                                <div class="control">
-                                    <input id="t3" name="tmima[]" type="text" placeholder="Τμήμα" class="input">
-                                </div>
-
-                                <div class="control">
-                                    <input id="t4" name="tmima[]" type="text" placeholder="Τμήμα" class="input">
-                                </div>
-
-                            </div>
-
-                            <!-- Text input-->
-                            <div class="field is-grouped">
-                                <div class="control">
-                                    <input id="t5" name="tmima[]" type="text" placeholder="Τμήμα" class="input">
-                                </div>
-
-                                <div class="control">
-                                    <input id="t6" name="tmima[]" type="text" placeholder="Τμήμα" class="input">
-                                </div>
+                                @endfor
                             </div>
 
                         </fieldset>
@@ -287,6 +269,7 @@
         $('body').on('click', '.edit', function() {
             var am = this.id
             $.get("{{ route('students.edit') }}" + "/" + am, function(data) {
+                createTmimataTextboxes(data.tmimataMaxCount)
                 amForEdit = am
                 $('#ajaxModel').addClass("is-active");
                 $('#modalTitle').html("Επεξεργασία μαθητή");
@@ -294,12 +277,10 @@
                 $('#eponimo').val(data.eponimo);
                 $('#onoma').val(data.onoma);
                 $('#patronimo').val(data.patronimo);
-                $('#t1').val(data.t1);
-                $('#t2').val(data.t2);
-                $('#t3').val(data.t3);
-                $('#t4').val(data.t4);
-                $('#t5').val(data.t5);
-                $('#t6').val(data.t6);
+                for (i = 0 ; i < data.tmimataMaxCount ; i++){
+                    k = i+1
+                    $('#t' + k).val(data.tmimata[i]);
+                }
             })
         })
 
@@ -323,7 +304,10 @@
         })
 
         $('body').on('click', '#newStudent', function() {
-            $('#ajaxModel').addClass("is-active");
+            $.get("{{ route('students.tmimataMaxCount') }}", function(tmimataMaxCount) {
+                createTmimataTextboxes(tmimataMaxCount)
+                $('#ajaxModel').addClass("is-active");
+            })
         })
         $('body').on('click', '#closeModalStudent', function() {
             $('#studentsForm').trigger("reset")
@@ -638,6 +622,29 @@
         function isDDMMYY(str) {
             var regex = /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{2}$/
             return regex.test(str)
+        }
+
+        function createTmimataTextboxes(tmimataMaxCount){
+            if(tmimataMaxCount){
+                let html = ''
+                for(i=0; i<tmimataMaxCount; i+=2){
+                    
+                    html += `<div class="field is-grouped">
+
+                        <div class="control">
+                            <input id="t${i + 1}" name="tmima[]" type="text" placeholder="Τμήμα" class="input">
+                        </div>
+
+                        <div class="control">
+                            <input id="t${i + 2}" name="tmima[]" type="text" placeholder="Τμήμα" class="input">
+                        </div>
+
+                        </div>`
+
+                }
+                $('#tmimataTextboxes').html(html)
+
+            }
         }
 
     </script>

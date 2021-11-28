@@ -29,7 +29,12 @@ class StudentsController extends Controller
     $program = new Program;
     // οι ώρες του προγράμματος
     $totalHours = $program->get_num_of_hours();
-    return view('students', compact('totalHours'));
+    // τα περισσότερα τμήματα μαθητή
+    // $tmimataMaxCount = Tmima::tmimataMaxCount();
+    // αν είναι ζυγός ο αριθμός των τμημάτων προσθέτω ακόμη μια γραμμή
+    //$tmimataFormRows = $tmimataMaxCount % 2 == 0 ? round($tmimataMaxCount / 2) + 1 : round($tmimataMaxCount / 2);
+    $tmimataFormRows = 0;
+    return view('students', compact('totalHours', 'tmimataFormRows'));
   }
 
   public function getStudents()
@@ -53,6 +58,7 @@ class StudentsController extends Controller
       foreach ($stu['apousies'] as $ap) {
         $sumAp += array_sum(preg_split("//", $ap));
       }
+
       $newStudents[] = [
         'id' => $stu['id'],
         'eponimo' => $stu['eponimo'],
@@ -118,26 +124,11 @@ class StudentsController extends Controller
         'eponimo' => $stu->eponimo,
         'onoma' => $stu->onoma,
         'patronimo' => $stu->patronimo,
-        'tmimata' => $stu->tmimata[0] ?? null ? $stu->tmimata[0]->where('student_id', $stu->id)->orderByRaw('LENGTH(tmima)')->orderby('tmima')->pluck('tmima')->toArray() : []
+        'tmimata' => $stu->tmimata[0] ?? null ? $stu->tmimata[0]->where('student_id', $stu->id)->orderByRaw('LENGTH(tmima)')->orderby('tmima')->pluck('tmima')->toArray() : [],
+        'tmimataMaxCount' => $stu->tmimata[0] ?? null ? $stu->tmimata[0]->where('student_id', $stu->id)->orderByRaw('LENGTH(tmima)')->orderby('tmima')->count() + 1 : 1
       ];
     }
-
-    $newStudents = array();
-    foreach ($arrStudents as $stu) {
-      $newStudents[] = [
-        'id' => $stu['id'],
-        'eponimo' => $stu['eponimo'],
-        'onoma' => $stu['onoma'],
-        'patronimo' => $stu['patronimo'],
-        't1' => isset($stu['tmimata'][0]) ? $stu['tmimata'][0] : "",
-        't2' => isset($stu['tmimata'][1]) ? $stu['tmimata'][1] : "",
-        't3' => isset($stu['tmimata'][2]) ? $stu['tmimata'][2] : "",
-        't4' => isset($stu['tmimata'][3]) ? $stu['tmimata'][3] : "",
-        't5' => isset($stu['tmimata'][4]) ? $stu['tmimata'][4] : "",
-        't6' => isset($stu['tmimata'][5]) ? $stu['tmimata'][5] : ""
-      ];
-    }
-    return response()->json($newStudents[0]);
+    return response()->json($arrStudents[0]);
   }
 
   public function delete($am)
