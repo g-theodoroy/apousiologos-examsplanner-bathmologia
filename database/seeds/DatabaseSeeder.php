@@ -88,6 +88,13 @@ class DatabaseSeeder extends Seeder
     ]);
 
     DB::table('configs')->insert([
+      'key' => 'pastDaysInsertApousies',
+      'value' => null,
+      'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+      'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+    ]);
+
+    DB::table('configs')->insert([
       'key' => 'maxDiagonismataForDay',
       'value' => 1,
       'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
