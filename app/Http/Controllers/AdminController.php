@@ -283,6 +283,7 @@ class AdminController extends Controller
     // φτιάχνω πίνακα[μάθημα][αμ]=βαθμός 
     $finalGrades = array();
     foreach ($grades as $grade) {
+      if (!Anathesi::find($grade->anathesi_id)) continue;
       $finalGrades[Anathesi::find($grade->anathesi_id)->mathima][$grade->student_id] = $grade->grade;
     }
 
