@@ -194,7 +194,7 @@
                                                                 </th>
                                                             @endif
                                                             <th>{{ !$selectedTmima ? 'Τμ' : '' }}</th>
-                                                            <th>Ονοματεπώνυμο</th>
+                                                            <th colspan=2>Ονοματεπώνυμο</th>
                                                             <th @if (!$isAdmin && !$activeHour && !$hoursUnlocked)
                                                                 style="display:none;" @endif><span
                                                                     class="icon">
@@ -233,7 +233,10 @@
                                                                     <input class="input" id="ap{{ $student['id'] }}"
                                                                         name="ap{{ $student['id'] }}"
                                                                         value="{{ $student['apousies'] }}" type="hidden" size="5" />
-                                                                    {{ $student['eponimo'] }} {{ $student['onoma'] }}
+                                                                    {{ $student['id'] }}
+                                                                </td>
+                                                                <td title="πατρ: {{ $student['patronimo']}}" >
+                                                                   {{ $student['eponimo'] }} {{ $student['onoma'] }}
                                                                 </td>
                                                                 <th class="has-text-centered" @if (!$isAdmin && !$activeHour && !$hoursUnlocked)
                                                                     style="display:none;"

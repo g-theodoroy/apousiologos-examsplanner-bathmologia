@@ -64,7 +64,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th>&nbsp;</th>
-                                                            <th>Ονοματεπώνυμο</th>
+                                                            <th colspan=2>Ονοματεπώνυμο</th>
                                                             @if($showOtherGrades)
                                                             <th>&nbsp;</th>
                                                             @endif
@@ -82,6 +82,9 @@
                                                                     {{ $selectedTmima ? $loop->index + 1 : $student['tmima'] }}
                                                                 </td>
                                                                 <td>
+                                                                    {{ $student['id'] }}
+                                                                </td>
+                                                                <td title="πατρ: {{ $student['patronimo']}}" >
                                                                     {{ $student['eponimo'] }} {{ $student['onoma'] }}
                                                                 </td>
                                                                 @if($showOtherGrades)
