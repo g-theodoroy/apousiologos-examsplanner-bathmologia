@@ -140,12 +140,22 @@ class HomeController extends Controller
       ];
     }
     // ταξινόμηση πίνακα
-    usort($arrStudents, function ($a, $b) {
-      return $a['tmima'] <=> $b['tmima'] ?:
-        $a['eponimo'] <=> $b['eponimo'] ?:
-        $a['onoma'] <=> $b['onoma'] ?:
-        strnatcasecmp($a['patronimo'], $b['patronimo']);
-    });
+    // αν έχει επιλεγεί τμήμα ταξινόμηση με το Επώνυμο Όνομα
+    if ($selectedTmima) {
+      usort($arrStudents, function ($a, $b) {
+        return $a['eponimo'] <=> $b['eponimo'] ?:
+          $a['onoma'] <=> $b['onoma'] ?:
+          strnatcasecmp($a['patronimo'], $b['patronimo']);
+      });
+      // αν δεν έχει επιλεγεί τμήμα ταξινόμηση με το Τμήμα Επώνυμο Όνομα
+    } else {
+      usort($arrStudents, function ($a, $b) {
+        return $a['tmima'] <=> $b['tmima'] ?:
+          $a['eponimo'] <=> $b['eponimo'] ?:
+          $a['onoma'] <=> $b['onoma'] ?:
+          strnatcasecmp($a['patronimo'], $b['patronimo']);
+      });
+    }
 
     // φτιάχνω πίνακα με τις απουσίες της ημέρας
     // ανά ΤΑΞΗ
@@ -279,5 +289,4 @@ class HomeController extends Controller
       }
     }
   }
-
 }
