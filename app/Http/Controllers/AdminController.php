@@ -255,7 +255,7 @@ class AdminController extends Controller
 
           // βρίσκω το κοινό τμήμα μαθητή και μαθήματος και με αυτό βρίσκω το id της ανάθεσης
           $tmima = array_values(array_intersect($arrTmimata[$am], array_keys($arrAnatheseis[$lesson])));
-          $anathesi_id = $arrAnatheseis[$lesson][$tmima[0]];
+          if (count($tmima)) $anathesi_id = $arrAnatheseis[$lesson][$tmima[0]];
           //echo $am . " - " . $lesson  . " - " . $tmima[0]  . " - " . $anathesi_id  . " - " . $grade . "<hr>";
 
           // αν υπάρχει id
