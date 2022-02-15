@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\User;
 use App\Role;
-use App\Anathesi;
+use App\User;
+use App\Grade;
 use DataTables;
+use App\Anathesi;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class TeachersController extends Controller
@@ -87,6 +88,18 @@ class TeachersController extends Controller
         'password' => Hash::make(trim($request->password)),
         'role_id' => $role,
       ]);
+      // εισαγωγή των αναθέσεων τμήμα -> μάθημα
+      $tmimata = explode("\n", str_replace(["\r\n", "\n\r", "\r"], "\n", $request->tmimata));
+      foreach ($tmimata as $tmima) {
+        if (trim($tmima)) {
+          $data = explode("->", $tmima);
+          Anathesi::updateOrCreate(['user_id' => $user->id, 'tmima' => trim($data[0]), 'mathima' => trim($data[1] ?? null)], [
+            'user_id' => $user->id,
+            'tmima' => trim($data[0]),
+            'mathima' => trim($data[1] ?? null),
+          ]);
+        }
+      }
     } else {
       // δεν αφήνω τον πρώτο χρήστη που γράφτηκε ως Διαχειριστής να πάψει να είναι
       if ($request->id == User::first()->id) $role = 1;
@@ -98,20 +111,34 @@ class TeachersController extends Controller
       if ($request->password) $user->password = Hash::make(trim($request->password));
       $user->save();
     }
+    // κρατάω τα id των υπαρχόντων αναθέσεων
+    $oldAnatheseisIds = Anathesi::where('user_id', $user->id)->pluck('id');
 
-    Anathesi::where('user_id', $user->id)->delete();
+    $newAnatheseisIds = [];
     $tmimata = explode("\n", str_replace(["\r\n", "\n\r", "\r"], "\n", $request->tmimata));
-
+    // εισάγω τις καινούριες αναθέσεις ή ενημερώνω τις υπάρχουσες
     foreach ($tmimata as $tmima) {
       if (trim($tmima)) {
         $data = explode("->", $tmima);
-        Anathesi::updateOrCreate(['user_id' => $user->id, 'tmima' => trim($data[0]), 'mathima' => trim($data[1] ?? null)], [
+        $newAnathesi = Anathesi::updateOrCreate(['user_id' => $user->id, 'tmima' => trim($data[0]), 'mathima' => trim($data[1] ?? null)], [
           'user_id' => $user->id,
           'tmima' => trim($data[0]),
           'mathima' => trim($data[1] ?? null),
         ]);
+        // βάζω τα νέα ή ενημερωμένα id σε πίνακα
+        $newAnatheseisIds[] = $newAnathesi->id;
       }
     }
+
+    // ελέγχω αν οι παλιές αναθέσεις υπάρχουν στον πίνακα των νέων
+    // και αν δεν υπάρχουν διαγράφω αυτές και τυχόν περασμένους βαθμούς
+    foreach ($oldAnatheseisIds as $anathId) {
+      if (!in_array($anathId, $newAnatheseisIds)) {
+        Anathesi::where('id', $anathId)->delete();
+        Grade::where('anathesi_id', $anathId)->delete();
+      }
+    }
+
     return response()->json(['success' => 'Teacher saved successfully.']);
   }
 
