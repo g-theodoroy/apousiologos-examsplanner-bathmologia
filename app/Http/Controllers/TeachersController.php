@@ -88,18 +88,6 @@ class TeachersController extends Controller
         'password' => Hash::make(trim($request->password)),
         'role_id' => $role,
       ]);
-      // εισαγωγή των αναθέσεων τμήμα -> μάθημα
-      $tmimata = explode("\n", str_replace(["\r\n", "\n\r", "\r"], "\n", $request->tmimata));
-      foreach ($tmimata as $tmima) {
-        if (trim($tmima)) {
-          $data = explode("->", $tmima);
-          Anathesi::updateOrCreate(['user_id' => $user->id, 'tmima' => trim($data[0]), 'mathima' => trim($data[1] ?? null)], [
-            'user_id' => $user->id,
-            'tmima' => trim($data[0]),
-            'mathima' => trim($data[1] ?? null),
-          ]);
-        }
-      }
     } else {
       // δεν αφήνω τον πρώτο χρήστη που γράφτηκε ως Διαχειριστής να πάψει να είναι
       if ($request->id == User::first()->id) $role = 1;
@@ -117,10 +105,11 @@ class TeachersController extends Controller
     $newAnatheseisIds = [];
     $tmimata = explode("\n", str_replace(["\r\n", "\n\r", "\r"], "\n", $request->tmimata));
     // εισάγω τις καινούριες αναθέσεις ή ενημερώνω τις υπάρχουσες
+    // αλλάζοντας την ανάθεση στον τρέχοντα χρήστη
     foreach ($tmimata as $tmima) {
       if (trim($tmima)) {
         $data = explode("->", $tmima);
-        $newAnathesi = Anathesi::updateOrCreate(['user_id' => $user->id, 'tmima' => trim($data[0]), 'mathima' => trim($data[1] ?? null)], [
+        $newAnathesi = Anathesi::updateOrCreate(['tmima' => trim($data[0]), 'mathima' => trim($data[1] ?? null)], [
           'user_id' => $user->id,
           'tmima' => trim($data[0]),
           'mathima' => trim($data[1] ?? null),
@@ -131,11 +120,17 @@ class TeachersController extends Controller
     }
 
     // ελέγχω αν οι παλιές αναθέσεις υπάρχουν στον πίνακα των νέων
-    // και αν δεν υπάρχουν διαγράφω αυτές και τυχόν περασμένους βαθμούς
+    // και αν δεν υπάρχουν τότε
+    //        αν υπάρχουν βαθμοί αποδεσμεύω την ανάθεση από τον χρήστη βάζοντας user_id = 0
+    //        αν ΔΕΝ υπάρχουν βαθμοί ΔΙΑΓΡΆΦΩ την ανάθεση
+
     foreach ($oldAnatheseisIds as $anathId) {
       if (!in_array($anathId, $newAnatheseisIds)) {
-        Anathesi::where('id', $anathId)->delete();
-        Grade::where('anathesi_id', $anathId)->delete();
+        if (Grade::where('anathesi_id', $anathId)->count()) {
+          Anathesi::where('id', $anathId)->update(['user_id' => 0]);
+        } else {
+          Anathesi::where('id', $anathId)->delete();
+        }
       }
     }
 
